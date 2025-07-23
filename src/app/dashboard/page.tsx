@@ -1,0 +1,204 @@
+'use client'
+
+import { useEffect } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Plus, Sparkles } from 'lucide-react'
+import { EmptyMessage } from '@/components/ui/empty-message'
+import { ProjectForm } from '@/components/project-form'
+import { PRDViewer } from '@/components/prd-viewer'
+import { TaskCards } from '@/components/task-cards'
+import { useProject } from '@/hooks/use-project'
+import { useAIStream } from '@/hooks/use-ai-stream'
+import { useMCP } from '@/hooks/use-mcp'
+import { useTaskStream } from '@/hooks/use-task-stream'
+import { useProjectStore } from '@/store/project-store'
+import { toast } from 'sonner'
+
+export default function DashboardPage() {
+  const { createProject, updateProject } = useProject()
+  const { selectedProject, setSelectedProject, isFormOpen, setIsFormOpen, fetchProjects } = useProjectStore()
+  
+  const { 
+    prdContent,
+    isGenerating,
+    generatePRD: generatePRDBase,
+    reset
+  } = useAIStream()
+
+  const { 
+    tasks, 
+    fetchTasks, 
+    updateTask, 
+    deleteTask, 
+    reorderTasks 
+  } = useMCP()
+  
+  const {
+    isGenerating: isGeneratingTasks,
+    parsedTasks,
+    generateTasksStream,
+    saveTasks: saveStreamedTasks
+  } = useTaskStream({
+    onSuccess: async (generatedTasks) => {
+      if (selectedProject) {
+        // Save tasks to database
+        const savedTasks = await saveStreamedTasks(selectedProject.id, generatedTasks)
+        // Fetch to update local state
+        await fetchTasks(selectedProject.id)
+      }
+    }
+  })
+
+  const handleFormSuccess = async (formData: any) => {
+    setIsFormOpen(false)
+    
+    try {
+      // 1. Create project
+      const project = await createProject(formData)
+      if (!project) {
+        throw new Error('Failed to create project')
+      }
+      
+      // 2. Set as selected project
+      setSelectedProject(project)
+      
+      // 2.5. Refresh project list in store
+      await fetchProjects()
+      
+      // 3. Generate PRD with proper callback handling
+      await new Promise<void>((resolve, reject) => {
+        generatePRDBase(formData, {
+          onSuccess: async (content: string) => {
+            try {
+              // 4. Update project with PRD content
+              await updateProject(project.id, {
+                trd_content: content,
+                status: 'trd_generated'
+              })
+              // 5. Refresh project list to show updated status
+              await fetchProjects()
+              resolve()
+            } catch (error) {
+              reject(error)
+            }
+          },
+          onError: (error: Error) => {
+            reject(error)
+          }
+        })
+      })
+    } catch (error) {
+      toast.error('Failed to complete project setup')
+    }
+  }
+
+  const handleNewProject = () => {
+    setSelectedProject(null)
+    reset()
+    setIsFormOpen(true)
+  }
+
+  const handleBreakdownToTasks = async () => {
+    if (!selectedProject) return
+    
+    const displayContent = selectedProject.trd_content || prdContent || ''
+    if (!displayContent) {
+      toast.error('PRD content is required to generate tasks')
+      return
+    }
+
+    await generateTasksStream(selectedProject, displayContent)
+  }
+
+  // 선택된 프로젝트가 변경되면 작업 목록 조회
+  useEffect(() => {
+    if (selectedProject) {
+      fetchTasks(selectedProject.id)
+    }
+  }, [selectedProject, fetchTasks])
+
+  // 프로젝트가 있는 경우 TRD 뷰 표시
+  if (selectedProject) {
+    const displayContent = selectedProject.trd_content || prdContent || ''
+    
+    return (
+      <div className="p-6 h-full">
+        {/* Header */}
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold mb-2">{selectedProject.name}</h1>
+            <p className="text-muted-foreground">
+              {selectedProject.status === 'trd_generated' ? 'PRD generated' : 
+               selectedProject.status === 'generating' ? 'Generating PRD...' : 
+               'Draft'}
+              {tasks.length > 0 && ` • ${tasks.length} tasks`}
+            </p>
+          </div>
+          <Button onClick={handleNewProject} variant="outline" className="gap-2">
+            <Plus className="h-4 w-4" />
+            New Project
+          </Button>
+        </div>
+
+        {/* Main Content - Split View */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:h-[calc(100vh-180px)]">
+          {/* PRD Viewer */}
+          <PRDViewer
+            content={displayContent}
+            isGenerating={isGenerating}
+          />
+
+          {/* Task Cards */}
+          <TaskCards
+            tasks={isGeneratingTasks ? parsedTasks : tasks}
+            isLoading={isGeneratingTasks}
+            onTaskUpdate={updateTask}
+            onTaskDelete={deleteTask}
+            onTaskReorder={(taskIds) => reorderTasks(selectedProject.id, taskIds)}
+            onBreakdownToTasks={handleBreakdownToTasks}
+            showBreakdownButton={(!!displayContent || isGenerating) && !isGeneratingTasks && tasks.length === 0 && parsedTasks.length === 0}
+            isPRDGenerating={isGenerating}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  // 빈 상태 - 프로젝트가 없는 경우
+  return (
+    <div className="p-6">
+      {/* Welcome Section */}
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
+        <p className="text-muted-foreground">
+          Transform your project ideas into PRDs and task lists with AI
+        </p>
+      </div>
+
+      {/* Empty State */}
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Card className="max-w-md w-full">
+          <CardContent className="pt-6">
+            <EmptyMessage
+              icon={Sparkles}
+              message="Create your first project"
+              description="Enter your idea and AI will generate a PRD and task list"
+              action={{
+                label: "Create New Project",
+                onClick: () => setIsFormOpen(true)
+              }}
+            />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Project Form Modal */}
+      <ProjectForm
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        onSubmit={handleFormSuccess}
+      />
+    </div>
+  )
+}

@@ -77,30 +77,28 @@ export function Sidebar({ className }: SidebarProps) {
       )}
     >
       {/* Header */}
-      <div className="flex h-16 items-center px-4">
+      <div className="relative flex h-16 items-center justify-center px-4">
         {!isCollapsed ? (
-          <div className="flex items-center justify-between w-full">
-            <Logo variant="full" width={120} height={32} />
+          <>
+            <Logo variant="full" width={120} height={32} className="-ml-4 -mt-1" />
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 w-8 p-0"
+              className="h-8 w-8 p-0 absolute right-4"
               onClick={() => setIsCollapsed(!isCollapsed)}
             >
               <PanelLeftClose className="h-4 w-4" />
             </Button>
-          </div>
+          </>
         ) : (
-          <div className="flex items-center justify-center w-full">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 p-0"
-              onClick={() => setIsCollapsed(!isCollapsed)}
-            >
-              <PanelLeftOpen className="h-4 w-4" />
-            </Button>
-          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+          >
+            <PanelLeftOpen className="h-4 w-4" />
+          </Button>
         )}
       </div>
 

@@ -79,18 +79,18 @@ export function UserMenu({ collapsed = false }: UserMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-auto p-2 justify-start gap-2">
+        <Button variant="ghost" className="w-full h-auto p-2 justify-start gap-2">
           <Avatar className="h-8 w-8">
             <AvatarImage src={user.user_metadata?.avatar_url} />
             <AvatarFallback>
               {getUserInitials(user.email)}
             </AvatarFallback>
           </Avatar>
-          <div className="flex flex-col items-start text-sm">
-            <div className="font-medium">
+          <div className="flex flex-col items-start text-sm overflow-hidden">
+            <div className="font-medium truncate max-w-full">
               {user.user_metadata?.full_name || user.email.split('@')[0]}
             </div>
-            <div className="text-xs text-muted-foreground truncate">
+            <div className="text-xs text-muted-foreground truncate max-w-full">
               {user.email}
             </div>
           </div>

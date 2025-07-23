@@ -55,9 +55,8 @@ export function PRDViewer({ content, isGenerating }: PRDViewerProps) {
           <div className="flex items-center gap-2">
             <CardTitle className="text-xl">📋 Product Requirements Document</CardTitle>
             {isGenerating && (
-              <Badge variant="secondary" className="gap-1">
+              <Badge variant="secondary" className="p-1.5">
                 <Loader2 className="h-3 w-3 animate-spin" />
-                Generating
               </Badge>
             )}
           </div>

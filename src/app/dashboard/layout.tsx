@@ -18,8 +18,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   // 한 번만 인증 체크
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) router.push('/login')
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error || !session) {
+        router.push('/login')
+      }
     })
   }, [router])
 

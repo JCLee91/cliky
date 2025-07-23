@@ -40,9 +40,8 @@ export function TaskCards({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             📋 Task List
-            <Badge variant="secondary" className="gap-1">
+            <Badge variant="secondary" className="p-1.5">
               <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-primary" />
-              Generating
             </Badge>
           </CardTitle>
           <CardDescription>
@@ -87,7 +86,11 @@ export function TaskCards({
             <div className="space-y-2">
               <h3 className="text-lg font-semibold">Next Step</h3>
               <p className="text-sm text-muted-foreground">
-                {isPRDGenerating ? 'Generating PRD...' : 'PRD has been generated. Now break it down into actionable tasks.'}
+                {isPRDGenerating ? (
+                  <span className="inline-flex items-center gap-2">
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-primary" />
+                  </span>
+                ) : 'PRD has been generated. Now break it down into actionable tasks.'}
               </p>
             </div>
             <Button 

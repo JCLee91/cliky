@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button'
 import { Menu, Search, HelpCircle } from 'lucide-react'
 import { ThemeToggle } from './theme-toggle'
 import { cn } from '@/lib/utils'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { HowToUseModal } from '@/components/how-to-use-modal'
+import { useSearchParams } from 'next/navigation'
 
 interface HeaderProps {
   onMenuClick?: () => void
@@ -14,6 +15,14 @@ interface HeaderProps {
 
 export function Header({ onMenuClick, className }: HeaderProps) {
   const [showHowToUse, setShowHowToUse] = useState(false)
+  const searchParams = useSearchParams()
+  
+  // URL 파라미터로 모달 자동 열기
+  useEffect(() => {
+    if (searchParams.get('howto') === 'true') {
+      setShowHowToUse(true)
+    }
+  }, [searchParams])
 
   return (
     <>

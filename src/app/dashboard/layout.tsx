@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 import { Sidebar } from '@/components/layout/sidebar'
-import { Header } from '@/components/layout/header'
+import { HeaderWrapper } from '@/components/layout/header/header-wrapper'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 
 interface DashboardLayoutProps {
@@ -48,7 +48,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Header onMenuClick={() => setSidebarOpen(true)} />
+        <HeaderWrapper onMenuClick={() => setSidebarOpen(true)} />
         
         <main className="flex-1 overflow-auto">
           {children}

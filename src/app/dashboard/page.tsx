@@ -37,6 +37,8 @@ export default function DashboardPage() {
   const {
     isGenerating: isGeneratingTasks,
     parsedTasks,
+    isExpandingTasks,
+    expandingTaskIds,
     generateTasksStream,
     saveTasks: saveStreamedTasks
   } = useTaskStream({
@@ -151,8 +153,8 @@ export default function DashboardPage() {
 
           {/* Task Cards */}
           <TaskCards
-            tasks={isGeneratingTasks ? parsedTasks : tasks}
-            isLoading={isGeneratingTasks}
+            tasks={isGeneratingTasks || isExpandingTasks ? parsedTasks : tasks}
+            isLoading={isGeneratingTasks || isExpandingTasks}
             onTaskUpdate={updateTask}
             onTaskDelete={deleteTask}
             onTaskReorder={(taskIds) => reorderTasks(selectedProject.id, taskIds)}

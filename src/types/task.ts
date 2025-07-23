@@ -23,6 +23,7 @@ export interface Task {
   // AI가 생성하는 추가 필드 (DB에는 저장 안됨)
   details?: string
   testStrategy?: string
+  acceptanceCriteria?: string[]
   // 복잡한 태스크용 필드
   subtasks?: Subtask[]
   complexity?: number

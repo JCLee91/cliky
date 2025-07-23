@@ -355,17 +355,41 @@ Tech Stack: ${options.projectContext.techPreferences?.join(', ') || 'N/A'}`
         const aiModel = process.env.AI_MODEL || 'gpt-4o'
         
         // JSON Lines 형식으로 각 태스크를 개별적으로 스트리밍하도록 수정된 프롬프트
+        const numTasks = options.numTasks || 12
+        const nextId = 1
+        
         const jsonLinesPrompt = `${tmUserPrompt}
 
-IMPORTANT: Output each task as a separate JSON object on its own line (JSON Lines format).
-Do NOT wrap tasks in an array or parent object.
-Each line should be a complete, valid JSON object representing one task.
+CRITICAL: Output each task as a separate JSON object on its own line (JSON Lines format).
+Each task MUST include ALL required fields with DETAILED content.
 
-Example output format:
-{"id":1,"title":"Setup project","description":"Initialize...","priority":"high","dependencies":[],"estimatedTime":"2 hours"}
-{"id":2,"title":"Create database","description":"Design...","priority":"medium","dependencies":[1],"estimatedTime":"3 hours"}
+Required fields for EACH task:
+- id: Sequential number starting from ${nextId}
+- title: Clear, actionable task title
+- description: Comprehensive description of the task objectives
+- priority: "high" | "medium" | "low"
+- dependencies: Array of task IDs this depends on
+- estimatedTime: Realistic time estimate (e.g., "3-4 hours")
+- acceptanceCriteria: Array of specific, measurable criteria that must be met
+- details: DETAILED implementation steps including:
+  - Specific files to create/modify with paths
+  - Key functions/components to implement
+  - Required libraries/packages to install
+  - Configuration changes needed
+  - Code structure and patterns to follow
+  - At least 3-5 numbered implementation steps
+- testStrategy: SPECIFIC testing approach including:
+  - Types of tests to write (unit, integration, e2e)
+  - Key test scenarios to cover
+  - Testing tools/frameworks to use
+  - Expected test outcomes
+  - At least 2-3 specific test cases
 
-Start generating tasks now:`
+Example of PROPERLY DETAILED output:
+{"id":1,"title":"Initialize Next.js 15 Project with TypeScript","description":"Set up a new Next.js 15 project with TypeScript, ESLint, and Tailwind CSS for the foundation of the application","priority":"high","dependencies":[],"estimatedTime":"2-3 hours","acceptanceCriteria":["Next.js 15 project created with TypeScript support","ESLint configured with recommended rules","Tailwind CSS integrated and working","Path aliases configured in tsconfig.json","Development server runs without errors"],"details":"1. Run 'npx create-next-app@latest' with TypeScript and Tailwind options\\n2. Configure ESLint with recommended rules in .eslintrc.json\\n3. Set up path aliases in tsconfig.json (@/components, @/lib, @/hooks)\\n4. Create initial folder structure: /components, /lib, /hooks, /types, /utils\\n5. Install additional dependencies: clsx, tailwind-merge, lucide-react\\n6. Configure Tailwind with custom theme colors and fonts\\n7. Create base layout component with responsive design","testStrategy":"1. Verify build process completes without errors\\n2. Run 'npm run lint' to ensure ESLint configuration works\\n3. Create a sample component and verify TypeScript types work correctly\\n4. Test hot reload functionality in development mode\\n5. Verify Tailwind classes apply correctly to components"}
+{"id":2,"title":"Set Up Supabase Authentication System","description":"Implement complete authentication flow with Supabase including signup, login, logout, and protected routes","priority":"high","dependencies":[1],"estimatedTime":"4-5 hours","acceptanceCriteria":["Users can sign up with email/password","Users can log in and maintain sessions","Logout functionality clears all session data","Protected routes redirect unauthenticated users","Authentication state persists across page refreshes","Error messages display for invalid credentials"],"details":"1. Install @supabase/supabase-js and @supabase/auth-helpers-nextjs\\n2. Create /lib/supabase/client.ts with Supabase client configuration\\n3. Implement /app/(auth)/login/page.tsx with email/password form\\n4. Implement /app/(auth)/signup/page.tsx with validation\\n5. Create AuthContext in /contexts/auth-context.tsx for user state\\n6. Add middleware.ts for protected route handling\\n7. Implement useAuth hook in /hooks/use-auth.ts\\n8. Create /components/auth/auth-guard.tsx wrapper component\\n9. Set up Supabase RLS policies for users table","testStrategy":"1. Test signup flow with valid and invalid email formats\\n2. Verify login persists across page refreshes using cookies\\n3. Test protected route redirect when unauthenticated\\n4. Verify logout clears session and redirects to login\\n5. Test error handling for network failures\\n6. Create Cypress e2e test for complete auth flow"}
+
+Start generating ${numTasks} tasks now:`
 
         try {
           const result = await streamText({

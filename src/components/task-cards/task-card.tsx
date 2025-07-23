@@ -265,6 +265,26 @@ export function TaskCard({ task, onUpdate, onDelete }: TaskCardProps) {
             </div>
           )}
 
+          {/* Acceptance Criteria */}
+          {task.acceptanceCriteria && task.acceptanceCriteria.length > 0 && (
+            <div className="space-y-1">
+              <div className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                <CheckCircle2 className="h-3 w-3" />
+                Acceptance Criteria
+              </div>
+              <div className="bg-muted/50 p-2 rounded">
+                <ul className="space-y-1">
+                  {task.acceptanceCriteria.map((criteria, index) => (
+                    <li key={index} className="flex items-start gap-1.5 text-xs leading-relaxed">
+                      <Circle className="h-2 w-2 mt-1 flex-shrink-0" />
+                      <span>{criteria}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+
           {/* Dependencies */}
           {task.dependencies && task.dependencies.length > 0 && (
             <div className="pt-2 border-t">
@@ -394,6 +414,22 @@ export function TaskCard({ task, onUpdate, onDelete }: TaskCardProps) {
                   <p className="text-sm whitespace-pre-wrap">
                     {task.testStrategy}
                   </p>
+                </div>
+              </div>
+            )}
+
+            {task.acceptanceCriteria && task.acceptanceCriteria.length > 0 && (
+              <div>
+                <h4 className="font-medium mb-2">Acceptance Criteria</h4>
+                <div className="bg-muted p-3 rounded-md">
+                  <ul className="space-y-1">
+                    {task.acceptanceCriteria.map((criteria, index) => (
+                      <li key={index} className="flex items-start gap-2 text-sm">
+                        <CheckCircle2 className="h-4 w-4 mt-0.5 text-green-600 flex-shrink-0" />
+                        <span>{criteria}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             )}

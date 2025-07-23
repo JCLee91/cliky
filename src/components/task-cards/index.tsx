@@ -85,13 +85,13 @@ export function TaskCards({
           >
             <div className="space-y-2">
               <h3 className="text-lg font-semibold">Next Step</h3>
-              <p className="text-sm text-muted-foreground">
+              <div className="text-sm text-muted-foreground">
                 {isPRDGenerating ? (
                   <span className="inline-flex items-center gap-2">
                     <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-primary" />
                   </span>
                 ) : 'PRD has been generated. Now break it down into actionable tasks.'}
-              </p>
+              </div>
             </div>
             <Button 
               onClick={onBreakdownToTasks} 

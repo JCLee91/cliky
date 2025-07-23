@@ -37,6 +37,7 @@ export function Logo({ variant = 'full', className = '', width = 120, height = 3
       width={width}
       height={height}
       className={className}
+      style={{ width: 'auto', height: 'auto', maxWidth: width, maxHeight: height }}
       priority
     />
   )

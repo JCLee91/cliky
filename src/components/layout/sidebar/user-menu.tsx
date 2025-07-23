@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { LogOut, User } from 'lucide-react'
+import { LogOut, User, Settings } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 
 interface UserMenuProps {
@@ -58,7 +58,7 @@ export function UserMenu({ collapsed = false }: UserMenuProps) {
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>
             <User className="mr-2 h-4 w-4" />
             Profile
           </DropdownMenuItem>

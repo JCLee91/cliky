@@ -43,6 +43,13 @@ export function generateTasksMarkdown(tasks: Task[]): string {
           markdown += `\n**Test Strategy:**\n${task.testStrategy}\n`
         }
         
+        if (task.acceptanceCriteria && task.acceptanceCriteria.length > 0) {
+          markdown += `\n**Acceptance Criteria:**\n`
+          task.acceptanceCriteria.forEach((criteria, i) => {
+            markdown += `- ${criteria}\n`
+          })
+        }
+        
         if (task.subtasks && task.subtasks.length > 0) {
           markdown += `\n**Subtasks:**\n`
           task.subtasks.forEach((subtask, i) => {
@@ -89,6 +96,13 @@ export function generateTasksXML(tasks: Task[]): string {
     }
     if (task.testStrategy) {
       xml += `    <test_strategy><![CDATA[${task.testStrategy}]]></test_strategy>\n`
+    }
+    if (task.acceptanceCriteria && task.acceptanceCriteria.length > 0) {
+      xml += `    <acceptance_criteria>\n`
+      task.acceptanceCriteria.forEach(criteria => {
+        xml += `      <criterion><![CDATA[${criteria}]]></criterion>\n`
+      })
+      xml += `    </acceptance_criteria>\n`
     }
     if (task.dependencies && task.dependencies.length > 0) {
       xml += `    <dependencies>\n`

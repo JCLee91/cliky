@@ -9,9 +9,10 @@ interface LogoProps {
   className?: string
   width?: number
   height?: number
+  priority?: boolean
 }
 
-export function Logo({ variant = 'full', className = '', width = 120, height = 32 }: LogoProps) {
+export function Logo({ variant = 'full', className = '', width = 120, height = 32, priority = false }: LogoProps) {
   const { theme, resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
@@ -38,7 +39,7 @@ export function Logo({ variant = 'full', className = '', width = 120, height = 3
         fill
         sizes={`${width}px`}
         style={{ objectFit: 'contain' }}
-        priority
+        priority={priority}
       />
     </div>
   )

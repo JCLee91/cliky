@@ -1,12 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { Sidebar } from '@/components/layout/sidebar'
 import { Header } from '@/components/layout/header'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import { cn } from '@/lib/utils'
-import { supabase } from '@/lib/supabase/client'
+import { Sheet, SheetContent } from '@/components/ui/sheet'
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -14,16 +11,6 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const router = useRouter()
-
-  // 한 번만 인증 체크
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      if (error || !session) {
-        router.push('/login')
-      }
-    })
-  }, [router])
 
   return (
     <div className="h-screen flex">

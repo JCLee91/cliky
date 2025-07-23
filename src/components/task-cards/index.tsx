@@ -89,7 +89,7 @@ export function TaskCards({
           </div>
         </CardHeader>
         <CardContent className="flex-1 relative">
-          <div className="absolute inset-x-0 top-16 flex justify-center">
+          <div className="absolute inset-x-0 top-0 flex justify-center">
             <AnimatePresence mode="wait">
               <motion.div
                 initial={{ opacity: 0, y: -20 }}

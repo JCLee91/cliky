@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2, Github } from 'lucide-react'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Logo } from '@/components/ui/logo'
 
 export default function LoginPage() {
@@ -18,21 +17,32 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isSignUp, setIsSignUp] = useState(false)
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true)
   const router = useRouter()
+  const searchParams = useSearchParams()
 
+  // URL 파라미터에서 에러 확인
   useEffect(() => {
-    const checkUser = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser()
-        if (user) {
-          router.push('/dashboard')
-        }
-      } finally {
-        setIsCheckingAuth(false)
-      }
+    const urlError = searchParams.get('error')
+    if (urlError && urlError !== 'no_code') {
+      setError(decodeURIComponent(urlError))
     }
-    checkUser()
+  }, [searchParams])
+
+  // 세션 확인 및 리다이렉트
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        router.push('/dashboard')
+      }
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        router.push('/dashboard')
+      }
+    })
+
+    return () => subscription.unsubscribe()
   }, [router])
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -64,72 +74,43 @@ export default function LoginPage() {
   }
 
   const handleGoogleSignIn = async () => {
-    setIsLoading(true)
+    setError(null)
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`
+          redirectTo: `${window.location.origin}/auth/callback`
         }
       })
       if (error) throw error
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Failed to sign in with Google.')
-    } finally {
-      setIsLoading(false)
     }
   }
 
   const handleGithubSignIn = async () => {
-    setIsLoading(true)
+    setError(null)
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'github',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`
+          redirectTo: `${window.location.origin}/auth/callback`
         }
       })
       if (error) throw error
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Failed to sign in with GitHub.')
-    } finally {
-      setIsLoading(false)
     }
   }
 
-  if (isCheckingAuth) {
-    return (
-      <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <Skeleton className="h-12 w-40 mx-auto mb-4" />
-            <Skeleton className="h-4 w-40 mx-auto" />
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-12" />
-              <Skeleton className="h-10 w-full" />
-            </div>
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-16" />
-              <Skeleton className="h-10 w-full" />
-            </div>
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-px w-full my-4" />
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
+
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader>
           <div className="flex justify-center mb-4">
-            <Logo width={160} height={48} />
+            <Logo width={160} height={48} priority />
           </div>
           <CardDescription className="text-center">
             {isSignUp ? 'Create your account' : 'Sign in to your account'}

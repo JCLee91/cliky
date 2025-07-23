@@ -16,6 +16,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { Logo } from '@/components/ui/logo'
+import Link from 'next/link'
 
 interface SidebarProps {
   className?: string
@@ -43,7 +44,9 @@ export function Sidebar({ className }: SidebarProps) {
           <SheetContent side="left" className="w-56 p-0">
             <SheetHeader className="px-4 py-4">
               <SheetTitle className="flex items-center gap-2">
-                <Logo variant="full" width={100} height={28} />
+                <Link href="/dashboard" onClick={() => setIsOpen(false)}>
+                  <Logo variant="full" width={100} height={28} />
+                </Link>
               </SheetTitle>
             </SheetHeader>
             <Separator />
@@ -80,7 +83,9 @@ export function Sidebar({ className }: SidebarProps) {
       <div className="relative flex h-16 items-center justify-center px-4">
         {!isCollapsed ? (
           <>
-            <Logo variant="full" width={120} height={32} className="-ml-4 -mt-1" />
+            <Link href="/dashboard" className="flex items-center">
+              <Logo variant="full" width={120} height={32} className="-ml-4 -mt-1" />
+            </Link>
             <Button
               variant="ghost"
               size="sm"

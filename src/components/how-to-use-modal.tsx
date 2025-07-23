@@ -37,7 +37,7 @@ When you've read the documentation and understand the project and these instruct
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-4xl">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">How to Use Cliky</DialogTitle>
           <DialogDescription>

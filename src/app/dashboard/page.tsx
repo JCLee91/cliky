@@ -149,6 +149,7 @@ export default function DashboardPage() {
           <PRDViewer
             content={displayContent}
             isGenerating={isGenerating}
+            projectName={selectedProject.name}
           />
 
           {/* Task Cards */}
@@ -161,6 +162,7 @@ export default function DashboardPage() {
             onBreakdownToTasks={handleBreakdownToTasks}
             showBreakdownButton={(!!displayContent || isGenerating) && !isGeneratingTasks && tasks.length === 0 && parsedTasks.length === 0}
             isPRDGenerating={isGenerating}
+            projectName={selectedProject.name}
           />
         </div>
       </div>

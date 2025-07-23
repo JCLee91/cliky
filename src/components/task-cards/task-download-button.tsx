@@ -6,9 +6,10 @@ import { generateTasksMarkdown, generateTasksXML } from '@/utils/task-xml-conver
 
 interface TaskDownloadButtonProps {
   tasks: Task[]
+  projectName?: string
 }
 
-export function TaskDownloadButton({ tasks }: TaskDownloadButtonProps) {
+export function TaskDownloadButton({ tasks, projectName }: TaskDownloadButtonProps) {
   if (tasks.length === 0) {
     return null
   }
@@ -30,7 +31,7 @@ export function TaskDownloadButton({ tasks }: TaskDownloadButtonProps) {
   return (
     <DownloadMenu 
       content={generateTasksMarkdown(tasks)} 
-      filename="tasks"
+      filename={projectName ? `${projectName}_Tasks` : "tasks"}
       customXMLConverter={() => generateTasksXML(tasks)}
     />
   )

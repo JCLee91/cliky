@@ -15,9 +15,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 interface PRDViewerProps {
   content: string
   isGenerating: boolean
+  projectName?: string
 }
 
-export function PRDViewer({ content, isGenerating }: PRDViewerProps) {
+export function PRDViewer({ content, isGenerating, projectName }: PRDViewerProps) {
   const [isCopied, setIsCopied] = useState(false)
 
   const handleCopy = async () => {
@@ -85,7 +86,7 @@ export function PRDViewer({ content, isGenerating }: PRDViewerProps) {
                   </AnimatePresence>
                   {isCopied ? 'Copied!' : 'Copy'}
                 </Button>
-                <DownloadMenu content={content} filename="PRD" />
+                <DownloadMenu content={content} filename={projectName ? `${projectName}_PRD` : "PRD"} />
               </>
             )}
           </div>

@@ -20,6 +20,7 @@ interface TaskCardsProps {
   onBreakdownToTasks?: () => void
   showBreakdownButton?: boolean
   isPRDGenerating?: boolean
+  projectName?: string
 }
 
 export function TaskCards({
@@ -31,7 +32,8 @@ export function TaskCards({
   onAddTask,
   onBreakdownToTasks,
   showBreakdownButton = false,
-  isPRDGenerating = false
+  isPRDGenerating = false,
+  projectName
 }: TaskCardsProps) {
 
   if (isLoading && tasks.length === 0) {
@@ -140,7 +142,7 @@ export function TaskCards({
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
-            {!isLoading && tasks.length > 0 && <TaskDownloadButton tasks={tasks} />}
+            {!isLoading && tasks.length > 0 && <TaskDownloadButton tasks={tasks} projectName={projectName} />}
             {onAddTask && (
               <Button onClick={onAddTask} size="sm" variant="outline" className="gap-2">
                 <Plus className="h-4 w-4" />

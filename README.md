@@ -1,6 +1,6 @@
 # 🚀 Cliky
 
-Fast, flawless product building tool for vive coding
+Fast, flawless product building tool for vibe coding
 
 ## ✨ Key Features
 

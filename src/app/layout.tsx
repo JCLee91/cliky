@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Cliky - Fast, flawless product building tool for vive coding',
+  title: 'Cliky - Fast, flawless product building tool for vibe coding',
   description: 'Transform your ideas into production-ready MVPs with AI-powered PRD generation and task breakdown',
   icons: {
     icon: '/favicon.ico',

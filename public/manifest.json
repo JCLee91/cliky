@@ -1,7 +1,7 @@
 {
   "name": "Cliky",
   "short_name": "Cliky",
-  "description": "Fast, flawless product building tool for vive coding",
+  "description": "Fast, flawless product building tool for vibe coding",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1a1a2e",

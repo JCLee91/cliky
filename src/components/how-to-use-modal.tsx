@@ -15,12 +15,15 @@ export function HowToUseModal({ open, onOpenChange }: HowToUseModalProps) {
   const [copiedPrompt, setCopiedPrompt] = useState(false)
   const { toast } = useToast()
   
-  const promptText = `1. Read both the PRD and the Tasks file to familiarize yourself with the project you'll be developing. 
+  const promptText = `## Instruction 
+1. Read both the PRD and the Tasks file in the \`root/DOC\` folder of this project to familiarize yourself with the project you'll be developing. 
 2. Work through the tasks in the order listed in the Tasks documentation. 
 3. Update your progress in the Tasks file as you complete each task. 
-4. IMPORTANT: Be sure to read the PRD as context before starting each task.
+4. Anything I have to do myself (ex setting environment variables), write it all out in a MD file in the \`root/SET-GUIDE\` folder at the end of the task.
 
-When you've read the documentation and understand the project and these instructions, say 'I'm ready to make something cool'.`
+**IMPORTANT RULE: Read the PRD file evertime before starting next task as context.**
+
+When you've read the documentation and understand the project and these instructions, say 'I&apos;m ready to make something cool'.`
   
   const handleCopyPrompt = () => {
     navigator.clipboard.writeText(promptText)

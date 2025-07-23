@@ -12,6 +12,7 @@ import { DownloadMenu } from '@/components/ui/download-menu'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Skeleton, SkeletonText } from '@/components/ui/skeleton'
+import { ANIMATION_PRESETS } from '@/lib/animation-presets'
 
 interface PRDViewerProps {
   content: string
@@ -49,10 +50,7 @@ export function PRDViewer({ content, isGenerating, projectName }: PRDViewerProps
             <AnimatePresence mode="wait">
               {content && !isGenerating && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 0.2 }}
+                  {...ANIMATION_PRESETS.modal}
                   className="flex items-center gap-2"
                 >
                   <Button
@@ -65,9 +63,7 @@ export function PRDViewer({ content, isGenerating, projectName }: PRDViewerProps
                       {isCopied ? (
                         <motion.div
                           key="check"
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          exit={{ scale: 0 }}
+                          {...ANIMATION_PRESETS.modal}
                         >
                           <Check className="h-4 w-4 text-green-500" />
                         </motion.div>
@@ -85,10 +81,8 @@ export function PRDViewer({ content, isGenerating, projectName }: PRDViewerProps
         </div>
         {isGenerating && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
+            {...ANIMATION_PRESETS.fade}
+            animate={{ ...ANIMATION_PRESETS.fade.animate, height: 'auto' }}
             className="space-y-2"
           >
             <div className="flex items-center gap-2 text-sm text-muted-foreground">

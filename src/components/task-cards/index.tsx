@@ -10,6 +10,7 @@ import { TaskDownloadButton } from './task-download-button'
 import { EmptyMessage } from '@/components/ui/empty-message'
 import { Plus, FileText, Loader2 } from 'lucide-react'
 import { CardSkeleton } from '@/components/ui/skeletons/card-skeleton'
+import { ANIMATION_PRESETS, staggerDelay } from '@/lib/animation-presets'
 
 interface TaskCardsProps {
   tasks: Task[]
@@ -92,9 +93,7 @@ export function TaskCards({
           <div className="absolute inset-x-0 top-0 flex justify-center">
             <AnimatePresence mode="wait">
               <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
+                {...ANIMATION_PRESETS.fade}
               >
                 <EmptyMessage
                   icon={FileText}
@@ -185,12 +184,10 @@ export function TaskCards({
               <motion.div
                 key={task.id}
                 layout
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.8 }}
+                {...ANIMATION_PRESETS.listItem}
                 transition={{ 
-                  duration: 0.3,
-                  delay: isLoading ? Math.min(index * 0.05, 0.3) : 0
+                  ...ANIMATION_PRESETS.listItem.transition,
+                  delay: isLoading ? staggerDelay(index) : 0
                 }}
               >
                 <TaskCard
@@ -206,9 +203,7 @@ export function TaskCards({
           {/* 로딩 중 추가 스켈레톤 */}
           {isLoading && (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
+              {...ANIMATION_PRESETS.fade}
             >
               <CardSkeleton showHeader={false} lines={3} />
             </motion.div>

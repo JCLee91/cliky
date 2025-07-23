@@ -16,6 +16,7 @@ import { useTaskStream } from '@/hooks/use-task-stream'
 import { useProjectStore } from '@/store/project-store'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
+import { ANIMATION_PRESETS } from '@/lib/animation-presets'
 
 export default function DashboardPage() {
   const { createProject, updateProject, deleteProject } = useProject()
@@ -136,11 +137,8 @@ export default function DashboardPage() {
       <AnimatePresence mode="wait">
         {selectedProject ? (
           <motion.div
-            key="project-view"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+            key={`project-${selectedProject.id}`} // 프로젝트 ID를 key로 사용
+            {...ANIMATION_PRESETS.pageTransition}
             className="h-full"
           >
             {/* Header */}
@@ -181,7 +179,9 @@ export default function DashboardPage() {
 
               {/* Task Cards */}
               <TaskCards
-                tasks={isGeneratingTasks || isExpandingTasks ? parsedTasks : tasks}
+                tasks={isGeneratingTasks || isExpandingTasks 
+                  ? (parsedTasks.length > 0 ? parsedTasks : tasks) 
+                  : tasks}
                 isLoading={isGeneratingTasks || isExpandingTasks}
                 onTaskUpdate={updateTask}
                 onTaskDelete={deleteTask}
@@ -196,10 +196,7 @@ export default function DashboardPage() {
         ) : (
           <motion.div
             key="empty-state"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+            {...ANIMATION_PRESETS.pageTransition}
           >
             {/* Welcome Section */}
             <div className="mb-8">

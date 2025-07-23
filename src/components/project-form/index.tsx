@@ -15,6 +15,7 @@ import { FlowStep } from './steps/flow-step'
 import { TechStep } from './steps/tech-step'
 import { ProjectFormData } from '@/types/project'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ANIMATION_PRESETS } from '@/lib/animation-presets'
 
 type FormData = z.infer<typeof projectFormSchema>
 
@@ -130,10 +131,7 @@ export function ProjectForm({ open, onOpenChange, onSubmit, loading = false }: P
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${currentStep}-${formKey}`}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.2 }}
+                {...ANIMATION_PRESETS.pageTransition}
                 className="h-full"
                 data-no-translate="true"
               >

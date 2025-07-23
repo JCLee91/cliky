@@ -204,7 +204,7 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
           return updated
         })
       }
-    }, 100) // 100ms 디바운스
+    }, 300) // 300ms 디바운스로 증가하여 렌더링 빈도 감소
 
     return () => {
       clearTimeout(debounceTimer)

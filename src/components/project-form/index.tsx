@@ -79,9 +79,12 @@ export function ProjectForm({ open, onOpenChange, onSubmit, loading = false }: P
   }
 
   const handleClose = () => {
-    setCurrentStep(1)
-    form.reset()
+    // 부드러운 전환을 위해 약간의 지연 후 초기화
     onOpenChange(false)
+    setTimeout(() => {
+      setCurrentStep(1)
+      form.reset()
+    }, 300)
   }
 
   const renderCurrentStep = () => {

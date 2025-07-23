@@ -14,6 +14,7 @@ import { useMCP } from '@/hooks/use-mcp'
 import { useTaskStream } from '@/hooks/use-task-stream'
 import { useProjectStore } from '@/store/project-store'
 import { toast } from 'sonner'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export default function DashboardPage() {
   const { createProject, updateProject } = useProject()
@@ -104,98 +105,115 @@ export default function DashboardPage() {
   const handleBreakdownToTasks = async () => {
     if (!selectedProject) return
     
-    const displayContent = selectedProject.trd_content || prdContent || ''
-    if (!displayContent) {
-      toast.error('PRD content is required to generate tasks')
+    const prdContent = selectedProject.trd_content || ''
+    if (!prdContent) {
+      toast.error('No PRD content to analyze')
       return
     }
 
-    await generateTasksStream(selectedProject, displayContent)
+    try {
+      await generateTasksStream(prdContent, selectedProject.id)
+    } catch (error) {
+      toast.error('Failed to generate tasks')
+    }
   }
 
-  // 선택된 프로젝트가 변경되면 작업 목록 조회
+  // Fetch tasks when project is selected
   useEffect(() => {
-    if (selectedProject) {
+    if (selectedProject?.id) {
       fetchTasks(selectedProject.id)
     }
   }, [selectedProject, fetchTasks])
 
-  // 프로젝트가 있는 경우 TRD 뷰 표시
-  if (selectedProject) {
-    const displayContent = selectedProject.trd_content || prdContent || ''
-    
-    return (
-      <div className="p-6 h-full">
-        {/* Header */}
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold mb-2">{selectedProject.name}</h1>
-            <p className="text-muted-foreground">
-              {selectedProject.status === 'trd_generated' ? 'PRD generated' : 
-               selectedProject.status === 'generating' ? 'Generating PRD...' : 
-               'Draft'}
-              {tasks.length > 0 && ` • ${tasks.length} tasks`}
-            </p>
-          </div>
-          <Button onClick={handleNewProject} variant="outline" className="gap-2">
-            <Plus className="h-4 w-4" />
-            New Project
-          </Button>
-        </div>
+  const displayContent = selectedProject ? (selectedProject.trd_content || prdContent || '') : ''
 
-        {/* Main Content - Split View */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:h-[calc(100vh-180px)]">
-          {/* PRD Viewer */}
-          <PRDViewer
-            content={displayContent}
-            isGenerating={isGenerating}
-            projectName={selectedProject.name}
-          />
-
-          {/* Task Cards */}
-          <TaskCards
-            tasks={isGeneratingTasks || isExpandingTasks ? parsedTasks : tasks}
-            isLoading={isGeneratingTasks || isExpandingTasks}
-            onTaskUpdate={updateTask}
-            onTaskDelete={deleteTask}
-            onTaskReorder={(taskIds) => reorderTasks(selectedProject.id, taskIds)}
-            onBreakdownToTasks={handleBreakdownToTasks}
-            showBreakdownButton={(!!displayContent || isGenerating) && !isGeneratingTasks && tasks.length === 0 && parsedTasks.length === 0}
-            isPRDGenerating={isGenerating}
-            projectName={selectedProject.name}
-          />
-        </div>
-      </div>
-    )
-  }
-
-  // 빈 상태 - 프로젝트가 없는 경우
   return (
-    <div className="p-6">
-      {/* Welcome Section */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Transform your project ideas into PRDs and task lists with AI
-        </p>
-      </div>
+    <div className="p-6 h-full">
+      <AnimatePresence mode="wait">
+        {selectedProject ? (
+          <motion.div
+            key="project-view"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="h-full"
+          >
+            {/* Header */}
+            <div className="mb-6 flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold mb-2">{selectedProject.name}</h1>
+                <p className="text-muted-foreground">
+                  {selectedProject.status === 'trd_generated' ? 'PRD generated' : 
+                   selectedProject.status === 'generating' ? 'Generating PRD...' : 
+                   'Draft'}
+                  {tasks.length > 0 && ` • ${tasks.length} tasks`}
+                </p>
+              </div>
+              <Button onClick={handleNewProject} variant="outline" className="gap-2">
+                <Plus className="h-4 w-4" />
+                New Project
+              </Button>
+            </div>
 
-      {/* Empty State */}
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Card className="max-w-md w-full">
-          <CardContent className="pt-6">
-            <EmptyMessage
-              icon={Sparkles}
-              message="Create your first project"
-              description="Enter your idea and AI will generate a PRD and task list"
-              action={{
-                label: "Create New Project",
-                onClick: () => setIsFormOpen(true)
-              }}
-            />
-          </CardContent>
-        </Card>
-      </div>
+            {/* Main Content - Split View */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:h-[calc(100vh-180px)]">
+              {/* PRD Viewer */}
+              <PRDViewer
+                content={displayContent}
+                isGenerating={isGenerating}
+                projectName={selectedProject.name}
+              />
+
+              {/* Task Cards */}
+              <TaskCards
+                tasks={isGeneratingTasks || isExpandingTasks ? parsedTasks : tasks}
+                isLoading={isGeneratingTasks || isExpandingTasks}
+                onTaskUpdate={updateTask}
+                onTaskDelete={deleteTask}
+                onTaskReorder={(taskIds) => reorderTasks(selectedProject.id, taskIds)}
+                onBreakdownToTasks={handleBreakdownToTasks}
+                showBreakdownButton={(!!displayContent || isGenerating) && !isGeneratingTasks && tasks.length === 0 && parsedTasks.length === 0}
+                isPRDGenerating={isGenerating}
+                projectName={selectedProject.name}
+              />
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="empty-state"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            {/* Welcome Section */}
+            <div className="mb-8">
+              <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
+              <p className="text-muted-foreground">
+                Transform your project ideas into PRDs and task lists with AI
+              </p>
+            </div>
+
+            {/* Empty State */}
+            <div className="flex items-center justify-center min-h-[60vh]">
+              <Card className="max-w-md w-full">
+                <CardContent className="pt-6">
+                  <EmptyMessage
+                    icon={Sparkles}
+                    message="Create your first project"
+                    description="Enter your idea and AI will generate a PRD and task list"
+                    action={{
+                      label: "Create New Project",
+                      onClick: () => setIsFormOpen(true)
+                    }}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Project Form Modal */}
       <ProjectForm

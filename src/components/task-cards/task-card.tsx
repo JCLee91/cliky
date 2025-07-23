@@ -313,7 +313,18 @@ export function TaskCard({ task, onUpdate, onDelete }: TaskCardProps) {
                 Subtasks ({task.subtasks.length})
               </button>
               
-              {showSubtasks && (
+              <motion.div
+                initial={false}
+                animate={{ 
+                  height: showSubtasks ? 'auto' : 0,
+                  opacity: showSubtasks ? 1 : 0 
+                }}
+                transition={{ 
+                  duration: 0.3,
+                  ease: 'easeInOut'
+                }}
+                className="overflow-hidden"
+              >
                 <div className="mt-2 space-y-2 ml-2">
                   {task.subtasks.map((subtask) => (
                     <div key={subtask.id} className="flex items-start gap-2 p-2 bg-muted/30 rounded text-xs">
@@ -325,7 +336,7 @@ export function TaskCard({ task, onUpdate, onDelete }: TaskCardProps) {
                     </div>
                   ))}
                 </div>
-              )}
+              </motion.div>
             </div>
           )}
         </CardContent>

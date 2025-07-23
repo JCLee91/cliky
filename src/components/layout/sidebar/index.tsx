@@ -91,8 +91,7 @@ export function Sidebar({ className }: SidebarProps) {
             </Button>
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-2 w-full">
-            <Logo variant="symbol" width={32} height={32} />
+          <div className="flex items-center justify-center w-full">
             <Button
               variant="ghost"
               size="sm"

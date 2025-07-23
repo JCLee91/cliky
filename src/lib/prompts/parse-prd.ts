@@ -31,6 +31,14 @@ export function getTaskMasterPrompt(params: TaskMasterPromptParams): PromptResul
 
   const systemPrompt = `You are an AI assistant specialized in analyzing Product Requirements Documents (PRDs) and generating a structured, logically ordered, dependency-aware and sequenced list of development tasks in JSON format.
 
+IMPORTANT: Language Matching Rule
+- Detect the language of the PRD and generate ALL task content in the SAME language
+- If the PRD is in Korean, write all task titles, descriptions, details, and test strategies in Korean
+- If the PRD is in Spanish, write all task content in Spanish
+- If the PRD is in English, write all task content in English
+- Technical terms (e.g., API names, library names, function names) should remain in English
+- JSON field names must remain in English (id, title, description, etc.)
+
 Your role is to:
 1. Carefully analyze the provided PRD
 2. Break down the project into ${numTasks} actionable development tasks

@@ -28,7 +28,7 @@ export function Logo({ variant = 'full', className = '', width = 120, height = 3
   
   const logoSrc = variant === 'symbol' 
     ? '/image/logo_symbol.png'  // 심볼은 보라색으로 다크/라이트 모두 사용
-    : '/image/logo.png'          // 풀 로고도 동일하게 사용 (흰색 텍스트 없음)
+    : isDark ? '/image/logo_white.png' : '/image/logo.png'  // 다크 테마에서는 흰색 텍스트 로고 사용
 
   return (
     <Image

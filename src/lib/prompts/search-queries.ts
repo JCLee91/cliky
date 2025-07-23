@@ -16,6 +16,11 @@ export async function generateSearchQueriesWithAI(projectData: ProjectFormData):
   const systemPrompt = `You are an expert at finding the LATEST third-party services, APIs, and SDKs for MVP development.
 Your goal is to find MANAGED SOLUTIONS that reduce implementation complexity and errors.
 
+IMPORTANT: Language Rule for Search Queries
+- ALWAYS generate search queries in ENGLISH regardless of the input language
+- This ensures finding the best technical documentation and latest services
+- Technical terms, API names, and service names are primarily in English
+
 # Search Query Generation Strategy
 
 ## Priority Order (ALWAYS follow this):
@@ -57,12 +62,14 @@ Requirements:
 - Mix general feature searches with specific service searches
 - Always prefer "X as a service" over "how to build X"
 
-Output: Return exactly 3 queries, one per line.`
+Output: Return exactly 3 queries in ENGLISH, one per line.`
 
   const userPrompt = `Project: ${projectData.name}
 Core Problem: ${projectData.idea}
 Must-Have Features: ${projectData.features?.slice(0, 5).join(', ') || 'Not specified'}
 Tech Preference: ${projectData.techPreferences?.join(', ') || 'Next.js, React, TypeScript'}
+
+IMPORTANT: Generate all search queries in ENGLISH, even if the input above is in another language.
 
 Analyze the core features and generate search queries to find:
 1. The BEST managed service for the primary feature

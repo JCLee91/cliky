@@ -34,8 +34,9 @@ class ErrorBoundaryInner extends React.Component<ErrorBoundaryProps, ErrorBounda
     
     // Check if this is a Chrome translation-related error
     if (error.message?.includes('removeChild') && error.message?.includes('Node')) {
-      // Force a page reload to reset the DOM
-      window.location.reload()
+      // Log but don't reload - let Chrome handle the translation
+      console.warn('Chrome translation conflict detected, but allowing it to continue')
+      return
     }
   }
 

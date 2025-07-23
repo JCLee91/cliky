@@ -19,8 +19,21 @@ export const metadata: Metadata = {
   title: 'Cliky - Fast, flawless product building tool for vive coding',
   description: 'Transform your ideas into production-ready MVPs with AI-powered PRD generation and task breakdown',
   icons: {
-    icon: '/favicon.ico',
-    apple: '/image/logo_symbol_full.png',
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon-16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-48.png', sizes: '48x48', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/image/logo_symbol_full.png', sizes: '180x180' },
+    ],
+    other: [
+      {
+        rel: 'mask-icon',
+        url: '/image/logo_symbol_full.png',
+      },
+    ],
   },
   manifest: '/manifest.json',
 };

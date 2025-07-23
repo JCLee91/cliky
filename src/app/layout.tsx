@@ -4,6 +4,8 @@ import './globals.css';
 import Providers from './providers';
 import { StagewiseToolbar } from '@stagewise/toolbar-next';
 import ReactPlugin from '@stagewise-plugins/react';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -43,6 +45,8 @@ export default function RootLayout({
       >
         <StagewiseToolbar config={{ plugins: [ReactPlugin] }} />
         <Providers>{children}</Providers>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

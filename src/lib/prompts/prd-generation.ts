@@ -81,12 +81,31 @@ Available third-party services found:
 # AI 코딩 최적화 PRD v3.0
 > Vercel AI SDK와 MCP를 활용한 차세대 AI 코딩 대시보드
 
-## 프로젝트 목표
+## 1. 프로젝트 목표
 **사용자의 프로젝트 아이디어를 구조화된 PRD로 변환하고, Taskmaster MCP로 실행 가능한 작업으로 분해하는 AI 대시보드**
 
 ---
 
-## 핵심 유저 플로우
+## 2. Tech Stack
+
+| Category             | Technology / Library                       | Reasoning (선택 이유)                                    |
+| -------------------- | ------------------------------------------ | -------------------------------------------------------- |
+| Language             | TypeScript                                 | 정적 타입 검사로 안정성·가독성 확보                       |
+| Framework            | Next.js 15 (App Router) + React 19         | 모던 SSR/SSG 지원, 파일 기반 라우팅, React 동적 기능       |
+| UI Toolkit           | Tailwind CSS + shadcn/ui (Radix UI)        | 빠른 스타일링, 접근성 높은 컴포넌트 제공                 |
+| Motion & Animation   | Framer Motion                              | UX 개선용 간편 애니메이션                                 |
+| AI SDK               | \`ai\` (Vercel AI SDK)                       | 스트리밍 지원, Vercel 최적화                              |
+| OpenAI Client        | \`openai\`                                   | GPT-4o 모델 활용                                          |
+| Search API           | Brave Search API                           | 최신 기술 트렌드 실시간 검색                              |
+| Database & Auth      | Supabase (\`@supabase/supabase-js\`, RLS)     | 빠른 개발, 내장 인증·데이터베이스                         |
+| Task Orchestration   | \`@modelcontextprotocol/sdk\` (MCP)          | Taskmaster 기반 작업 분해                                 |
+| Forms & Validation   | React Hook Form + Zod                      | 선언적 폼 관리·스키마 기반 유효성 검사                    |
+| Markdown Rendering   | react-markdown + remark-gfm + rehype-highlight | 실시간 Markdown 파싱·하이라이팅                           |
+| Utilities            | clsx, tailwind-merge, date-fns             | 클래스명 결합·유틸리티 함수                                |
+
+---
+
+## 3. 핵심 유저 플로우
 
 ### 메인 플로우 다이어그램
 \`\`\`
@@ -227,7 +246,7 @@ src/
 
 ---
 
-## 핵심 구현 패턴
+## 4. 핵심 구현 패턴
 
 ### 1. Vercel AI SDK 스트리밍 구현
 \`\`\`typescript
@@ -259,7 +278,7 @@ export async function POST(req: Request) {
 
 ---
 
-## 구현 체크리스트
+## 5. 구현 체크리스트
 
 ### Phase 1: 기초 설정 (3시간)
 - [ ] Next.js 15 프로젝트 생성
@@ -310,12 +329,30 @@ Available third-party services found:
 # AI 블로그 에디터 PRD v3.0  
 > Notion 스타일 UI 기반, AI 글쓰기 지원 웹앱 (Vercel AI SDK 기반)
 
-## 프로젝트 목표  
+## 1. 프로젝트 목표  
 **사용자가 주제를 입력하면 AI가 개요 및 본문 초안을 생성해주고, 실시간 Markdown 에디터로 작성 결과를 관리하는 블로그 에디터.**
 
 ---
 
-## 핵심 유저 플로우
+## 2. Tech Stack
+
+| Category             | Technology / Library                       | Reasoning (선택 이유)                                    |
+| -------------------- | ------------------------------------------ | -------------------------------------------------------- |
+| Language             | TypeScript                                 | 정적 타입 검사로 안정성·가독성 확보                       |
+| Framework            | Next.js 15 (App Router) + React 19         | 모던 SSR/SSG 지원, 파일 기반 라우팅                      |
+| UI Toolkit           | Tailwind CSS + shadcn/ui                   | 빠른 스타일링, 접근성 높은 컴포넌트                       |
+| Animation            | Framer Motion                              | 부드러운 페이지 전환 및 요소 애니메이션                    |
+| AI SDK               | \`ai\` (Vercel AI SDK)                       | 스트리밍 텍스트 생성, Vercel 최적화                       |
+| OpenAI Client        | \`openai\`                                   | GPT-4o 모델로 개요 및 문단 생성                           |
+| Editor               | TipTap                                     | 확장 가능한 Notion 스타일 블록 에디터                     |
+| Database & Auth      | Supabase                                   | 빠른 개발, 내장 인증·데이터베이스                         |
+| Forms & Validation   | React Hook Form + Zod                      | 선언적 폼 관리·스키마 기반 유효성 검사                    |
+| Markdown             | react-markdown + remark-gfm                | 실시간 마크다운 렌더링                                    |
+| Utilities            | clsx, tailwind-merge                       | 클래스명 결합·스타일 관리                                 |
+
+---
+
+## 3. 핵심 유저 플로우
 
 \`\`\`
 [로그인 페이지]
@@ -372,7 +409,7 @@ Available third-party services found:
 
 ---
 
-## 프로젝트 구조 (줄 수 제한 포함)
+## 4. 프로젝트 구조 (줄 수 제한 포함)
 
 \`\`\`
 src/
@@ -405,26 +442,7 @@ src/
 
 ---
 
-## 기술 스택
-
-### Dependencies
-\`\`\`json
-{
-  "next": "15.0.2",
-  "react": "19.0.0",
-  "ai": "^3.4.0",
-  "openai": "^4.72.0",
-  "react-markdown": "^9.0.1",
-  "@supabase/supabase-js": "^2.46.0",
-  "shadcn/ui": "^0.9.0",
-  "zod": "^3.23.8",
-  "framer-motion": "^11.11.0"
-}
-\`\`\`
-
----
-
-## 구현 패턴
+## 5. 구현 패턴
 
 ### Vercel AI SDK - 개요/문단 생성
 \`\`\`typescript
@@ -446,7 +464,7 @@ export async function POST(req: Request) {
 
 ---
 
-## 구현 체크리스트
+## 5. 구현 체크리스트
 
 ### Phase 1: 설정 (2시간)
 - [ ] Next.js + Supabase + Tailwind + shadcn 초기화
@@ -492,12 +510,29 @@ Available third-party services found:
 # AI Q&A 커뮤니티 PRD v1.0
 > AI 기반 자동 분류, 요약, 투표 기능이 통합된 개발자 중심 Q&A 플랫폼
 
-## 프로젝트 목표
+## 1. 프로젝트 목표
 **개발자들이 기술 질문을 쉽게 올리고, AI가 자동으로 카테고리화·요약·답변 추천을 수행하는 실시간 Q&A 웹앱**
 
 ---
 
-## 핵심 유저 플로우
+## 2. Tech Stack
+
+| Category             | Technology / Library                       | Reasoning (선택 이유)                                    |
+| -------------------- | ------------------------------------------ | -------------------------------------------------------- |
+| Language             | TypeScript                                 | 정적 타입 검사로 안정성·가독성 확보                       |
+| Framework            | Next.js 15 (App Router)                    | SSR/SSG 지원, SEO 최적화, 빠른 페이지 로드                |
+| UI Toolkit           | Tailwind CSS + shadcn/ui                   | 빠른 스타일링, 접근성 높은 컴포넌트                       |
+| AI SDK               | \`ai\` (Vercel AI SDK)                       | 질문 분석 및 답변 생성                                    |
+| Search               | Algolia                                    | 중복 질문 감지, 고성능 검색                               |
+| Database & Auth      | Supabase (Real-time subscriptions)         | 실시간 업데이트, 내장 인증                                |
+| Rate Limiting        | Upstash Redis                              | 사용자별 요청 제한, 캐싱                                  |
+| Forms & Validation   | React Hook Form + Zod                      | 선언적 폼 관리·스키마 기반 유효성 검사                    |
+| State Management     | Zustand                                    | 경량 상태 관리                                           |
+| Utilities            | clsx, date-fns                             | 클래스명 결합·날짜 포맷팅                                 |
+
+---
+
+## 3. 핵심 유저 플로우
 
 \`\`\`
 [로그인 페이지]
@@ -564,7 +599,7 @@ Available third-party services found:
 
 ---
 
-## 디렉토리 구조
+## 4. 디렉토리 구조
 
 \`\`\`
 src/
@@ -602,7 +637,7 @@ src/
 
 ---
 
-## 프롬프트 템플릿 (AI 처리)
+## 5. 프롬프트 템플릿 (AI 처리)
 
 ### 시스템 프롬프트
 \`\`\`typescript
@@ -621,7 +656,7 @@ Respond in JSON format.
 
 ---
 
-## 핵심 기능 요약
+## 6. 핵심 기능 요약
 - AI 질문 카테고리 자동 분류
 - TL;DR 요약 자동 생성
 - 중복 질문 감지
@@ -631,7 +666,7 @@ Respond in JSON format.
 
 ---
 
-## 체크리스트
+## 7. 체크리스트
 
 ### Phase 1: 초기 설정
 - [ ] Supabase 프로젝트 생성

@@ -43,7 +43,7 @@ export function Sidebar({ className }: SidebarProps) {
           <SheetContent side="left" className="w-56 p-0">
             <SheetHeader className="px-4 py-4">
               <SheetTitle className="flex items-center gap-2">
-                <Logo className="h-8 w-auto" />
+                <Logo variant="full" width={100} height={28} />
               </SheetTitle>
             </SheetHeader>
             <Separator />
@@ -80,7 +80,7 @@ export function Sidebar({ className }: SidebarProps) {
       <div className="flex h-16 items-center px-4">
         {!isCollapsed ? (
           <div className="flex items-center justify-between w-full">
-            <Logo className="h-8 w-auto ml-2" />
+            <Logo variant="full" width={120} height={32} />
             <Button
               variant="ghost"
               size="sm"
@@ -91,7 +91,8 @@ export function Sidebar({ className }: SidebarProps) {
             </Button>
           </div>
         ) : (
-          <div className="flex items-center justify-center w-full">
+          <div className="flex flex-col items-center gap-2 w-full">
+            <Logo variant="symbol" width={32} height={32} />
             <Button
               variant="ghost"
               size="sm"

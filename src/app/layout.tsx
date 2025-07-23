@@ -16,11 +16,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'cliky - Fast, flawless MVP Building tool for vive coding',
+  title: 'Cliky - Fast, flawless product building tool for vive coding',
   description: 'Transform your ideas into production-ready MVPs with AI-powered PRD generation and task breakdown',
   icons: {
-    icon: '/image/logo_symbol.png',
-    apple: '/image/logo_symbol.png',
+    icon: '/favicon.ico',
+    apple: '/image/logo_symbol_full.png',
   },
   manifest: '/manifest.json',
 };

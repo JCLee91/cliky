@@ -40,7 +40,7 @@ export function DownloadMenu({ content, filename, className, customXMLConverter 
   const downloadAsMarkdown = () => {
     const timestamp = new Date().toISOString().split('T')[0]
     downloadFile(getContent(), `${filename}_${timestamp}.md`, 'text/markdown')
-    toast.success('Downloaded as Markdown file!')
+    // Success toast removed
   }
 
   const downloadAsXML = () => {
@@ -48,7 +48,7 @@ export function DownloadMenu({ content, filename, className, customXMLConverter 
     const xmlContent = customXMLConverter ? customXMLConverter(contentStr) : convertToXML(contentStr, filename)
     const timestamp = new Date().toISOString().split('T')[0]
     downloadFile(xmlContent, `${filename}_${timestamp}.xml`, 'application/xml')
-    toast.success('Downloaded as XML file!')
+    // Success toast removed
   }
 
   const convertToXML = (markdown: string, type: string): string => {

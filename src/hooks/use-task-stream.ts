@@ -35,7 +35,7 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
     stop
   } = useCompletion({
     api: '/api/taskmaster',
-    streamProtocol: 'text', // Explicitly set stream protocol
+    streamProtocol: 'text', // Use text protocol to match API's toTextStreamResponse()
     onResponse: async (response) => {
       if (!response.ok) {
         console.error('Task generation response error:', response.status, response.statusText)
@@ -101,7 +101,7 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
           const successCallback = callbacksRef.current.onSuccess || onSuccess
           successCallback?.(tasksWithComplexity)
           
-          toast.success(`${tasks.length} tasks generated successfully!`)
+          // Success toast removed
           
           // 복잡한 태스크 확장은 비동기로 별도 처리 (UI 블로킹 방지)
           const complexTasks = filterComplexTasks(tasksWithComplexity)
@@ -332,7 +332,7 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
           return updatedTasks
         })
         
-        toast.success('Complex tasks expanded successfully!')
+        // Success toast removed
       }
     } catch (error) {
       console.error('Failed to expand complex tasks:', error)

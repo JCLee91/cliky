@@ -45,8 +45,8 @@ export default function RootLayout({
       >
         <StagewiseToolbar config={{ plugins: [ReactPlugin] }} />
         <Providers>{children}</Providers>
-        <Analytics />
-        <SpeedInsights />
+        <Analytics debug={false} />
+        <SpeedInsights debug={false} />
       </body>
     </html>
   );

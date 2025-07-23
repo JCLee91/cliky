@@ -180,7 +180,7 @@ export function TaskCards({
       
       <CardContent className="flex-1 overflow-auto">
         <div className="grid grid-cols-1 gap-4">
-          <AnimatePresence mode="popLayout">
+          <AnimatePresence>
             {tasks.map((task, index) => (
               <motion.div
                 key={task.id}
@@ -195,6 +195,7 @@ export function TaskCards({
               >
                 <TaskCard
                   task={task}
+                  taskNumber={index + 1}
                   onUpdate={onTaskUpdate}
                   onDelete={onTaskDelete}
                 />

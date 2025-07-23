@@ -112,6 +112,13 @@ export function useMCP(options?: UseMCPOptions) {
 
   const fetchTasks = useCallback(async (projectId: string): Promise<Task[]> => {
     try {
+      // Validate projectId before making the request
+      if (!projectId || typeof projectId !== 'string') {
+        console.warn('fetchTasks called with invalid projectId:', projectId)
+        setTasks([])
+        return []
+      }
+
       const { data, error } = await supabase
         .from('tasks')
         .select('*')
@@ -135,6 +142,12 @@ export function useMCP(options?: UseMCPOptions) {
     taskId: string,
     updates: Partial<Task>
   ): Promise<boolean> => {
+    // Validate taskId
+    if (!taskId || typeof taskId !== 'string') {
+      console.error('updateTask called with invalid taskId:', taskId)
+      return false
+    }
+
     // Update local state immediately (optimistic update)
     setTasks(prev => prev.map(task => 
       task.id === taskId ? { ...task, ...updates } : task
@@ -149,7 +162,10 @@ export function useMCP(options?: UseMCPOptions) {
 
       if (error) {
         // Revert on error
-        await fetchTasks(tasks[0]?.project_id || '')
+        const currentTask = tasks.find(t => t.id === taskId)
+        if (currentTask?.project_id) {
+          await fetchTasks(currentTask.project_id)
+        }
         throw error
       }
 
@@ -231,6 +247,7 @@ export function useMCP(options?: UseMCPOptions) {
     updateTask,
     deleteTask,
     reorderTasks,
-    clearError
+    clearError,
+    setTasks
   }
 }

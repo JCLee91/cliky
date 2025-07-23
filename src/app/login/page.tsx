@@ -129,7 +129,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <div className="flex justify-center mb-4">
-            <Logo width={160} height={48} className="h-12 w-auto" />
+            <Logo width={160} height={48} />
           </div>
           <CardDescription className="text-center">
             {isSignUp ? 'Create your account' : 'Sign in to your account'}

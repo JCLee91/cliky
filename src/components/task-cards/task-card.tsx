@@ -39,11 +39,12 @@ import {
 
 interface TaskCardProps {
   task: Task
+  taskNumber?: number
   onUpdate?: (taskId: string, updates: Partial<Task>) => void
   onDelete?: (taskId: string) => void
 }
 
-export function TaskCard({ task, onUpdate, onDelete }: TaskCardProps) {
+export function TaskCard({ task, taskNumber, onUpdate, onDelete }: TaskCardProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editedDescription, setEditedDescription] = useState(task.description)
   const [showDetails, setShowDetails] = useState(false)
@@ -136,6 +137,11 @@ export function TaskCard({ task, onUpdate, onDelete }: TaskCardProps) {
                 <CardTitle className={`text-sm font-medium leading-5 ${
                   task.status === 'completed' ? 'line-through text-muted-foreground' : ''
                 }`}>
+                  {taskNumber && (
+                    <span className="font-bold mr-1">
+                      {taskNumber}.
+                    </span>
+                  )}
                   {task.title}
                 </CardTitle>
                 <div className="flex items-center gap-2 mt-2">

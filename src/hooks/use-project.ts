@@ -46,6 +46,7 @@ export function useProject(): UseProjectReturn {
       const { data, error } = await supabase
         .from('projects')
         .select('*')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false })
 
       if (error) throw error
@@ -142,19 +143,23 @@ export function useProject(): UseProjectReturn {
   const deleteProject = useCallback(async (id: string) => {
     setLoading(true)
     try {
+      // Soft delete - only set deleted_at timestamp
       const { error } = await supabase
         .from('projects')
-        .delete()
+        .update({ deleted_at: new Date().toISOString() })
         .eq('id', id)
 
       if (error) throw error
 
       await fetchProjects()
+      
+      // Clear selected project if it was deleted
+      const { selectedProject, setSelectedProject } = useProjectStore.getState()
+      if (selectedProject?.id === id) {
+        setSelectedProject(null)
+      }
 
-      toast({
-        title: 'Success',
-        description: 'Project deleted successfully.'
-      })
+      // Success toast removed
     } catch (error) {
       toast({
         title: 'Error',

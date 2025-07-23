@@ -31,14 +31,15 @@ export function Logo({ variant = 'full', className = '', width = 120, height = 3
     : isDark ? '/image/logo_white.png' : '/image/logo.png'  // 다크 테마에서는 흰색 텍스트 로고 사용
 
   return (
-    <Image
-      src={logoSrc}
-      alt="Logo"
-      width={width}
-      height={height}
-      className={className}
-      style={{ width: 'auto', height: 'auto', maxWidth: width, maxHeight: height }}
-      priority
-    />
+    <div className={className} style={{ width, height, position: 'relative' }}>
+      <Image
+        src={logoSrc}
+        alt="Logo"
+        fill
+        sizes={`${width}px`}
+        style={{ objectFit: 'contain' }}
+        priority
+      />
+    </div>
   )
 }

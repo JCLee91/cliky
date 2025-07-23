@@ -65,7 +65,7 @@ export default function ProfilePage() {
         window.dispatchEvent(new Event('userProfileUpdated'))
       }
 
-      toast.success('Profile updated successfully')
+      // Success toast removed
     } catch (error: any) {
       console.error('Error updating profile:', error)
       toast.error(error.message || 'Failed to update profile')
@@ -138,7 +138,7 @@ export default function ProfilePage() {
         window.dispatchEvent(new Event('userProfileUpdated'))
       }
       
-      toast.success('Avatar uploaded successfully')
+      // Success toast removed
     } catch (error: any) {
       console.error('Error uploading avatar:', error)
       const errorMessage = error.message || 'Failed to upload avatar'

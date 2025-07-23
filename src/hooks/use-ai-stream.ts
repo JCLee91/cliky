@@ -29,7 +29,7 @@ export function useAIStream(options?: UseAIStreamOptions) {
   } = useCompletion({
     api: '/api/taskmaster',
     onFinish: (prompt, completion) => {
-      toast.success('PRD generation completed!')
+      // Success toast removed
       // Use dynamic callback if available, otherwise use hook option
       const successCallback = callbacksRef.current.onSuccess || onSuccess
       successCallback?.(completion)

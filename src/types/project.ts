@@ -10,6 +10,7 @@ export interface Project {
   status: 'draft' | 'generating' | 'completed' | 'trd_generated'
   created_at: string
   updated_at: string
+  deleted_at?: string | null
 }
 
 export interface ProjectFormData {

@@ -1,13 +1,14 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Plus, Sparkles } from 'lucide-react'
+import { Plus, Sparkles, Trash2 } from 'lucide-react'
 import { EmptyMessage } from '@/components/ui/empty-message'
 import { ProjectForm } from '@/components/project-form'
 import { PRDViewer } from '@/components/prd-viewer'
 import { TaskCards } from '@/components/task-cards'
+import { DeleteProjectDialog } from '@/components/delete-project-dialog'
 import { useProject } from '@/hooks/use-project'
 import { useAIStream } from '@/hooks/use-ai-stream'
 import { useMCP } from '@/hooks/use-mcp'
@@ -17,8 +18,9 @@ import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export default function DashboardPage() {
-  const { createProject, updateProject } = useProject()
+  const { createProject, updateProject, deleteProject } = useProject()
   const { selectedProject, setSelectedProject, isFormOpen, setIsFormOpen, fetchProjects } = useProjectStore()
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   
   const { 
     prdContent,
@@ -125,7 +127,7 @@ export default function DashboardPage() {
     if (selectedProject?.id) {
       fetchTasks(selectedProject.id)
     }
-  }, [selectedProject, fetchTasks])
+  }, [selectedProject?.id, fetchTasks]) // fetchTasks is stable due to useCallback
 
   const displayContent = selectedProject ? (selectedProject.trd_content || prdContent || '') : ''
 
@@ -152,10 +154,20 @@ export default function DashboardPage() {
                   {tasks.length > 0 && ` • ${tasks.length} tasks`}
                 </p>
               </div>
-              <Button onClick={handleNewProject} variant="outline" className="gap-2">
-                <Plus className="h-4 w-4" />
-                New Project
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button 
+                  onClick={() => setDeleteDialogOpen(true)} 
+                  variant="outline" 
+                  size="icon"
+                  className="text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+                <Button onClick={handleNewProject} variant="outline" className="gap-2">
+                  <Plus className="h-4 w-4" />
+                  New Project
+                </Button>
+              </div>
             </div>
 
             {/* Main Content - Split View */}
@@ -223,6 +235,19 @@ export default function DashboardPage() {
         onOpenChange={setIsFormOpen}
         onSubmit={handleFormSuccess}
       />
+      
+      {/* Delete Confirmation Dialog */}
+      {selectedProject && (
+        <DeleteProjectDialog
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+          projectName={selectedProject.name}
+          onConfirm={async () => {
+            await deleteProject(selectedProject.id)
+            setDeleteDialogOpen(false)
+          }}
+        />
+      )}
     </div>
   )
 }

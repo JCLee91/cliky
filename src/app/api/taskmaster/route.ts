@@ -160,10 +160,24 @@ export async function POST(request: NextRequest) {
     console.log('Body.body exists?', body.body !== undefined)
     
     // Handle useCompletion hook format
-    // The hook sends the body parameters directly merged with prompt
-    if ('prompt' in body && !body.action && body.body) {
-      console.log('useCompletion format detected - extracting body.body')
-      body = body.body
+    // The hook sends: { prompt: '', ...actualBodyParams }
+    // We need to extract the actual body parameters
+    if ('prompt' in body && !body.action) {
+      console.log('useCompletion format detected')
+      console.log('Original body structure:', JSON.stringify(body, null, 2))
+      
+      // If body.body exists, use it (old format)
+      if (body.body && typeof body.body === 'object') {
+        console.log('Found body.body - using nested body')
+        body = body.body
+      } else {
+        // Otherwise, the actual parameters are merged at the top level
+        // Remove the prompt field and use the rest
+        const { prompt, ...actualBody } = body
+        console.log('No body.body - extracting from top level')
+        console.log('Extracted body:', JSON.stringify(actualBody, null, 2))
+        body = actualBody
+      }
     }
     
     // 액션별 스키마 검증
@@ -420,7 +434,7 @@ Example of PROPERLY DETAILED output:
 Start generating ${numTasks} tasks now:`
 
         try {
-          const result = await streamText({
+          const result = streamText({
             model: openai(aiModel),
             system: tmSystemPrompt,
             prompt: jsonLinesPrompt,
@@ -428,7 +442,7 @@ Start generating ${numTasks} tasks now:`
             maxTokens: 4000
           })
 
-          return result.toDataStreamResponse()
+          return result.toTextStreamResponse()
         } catch (streamError) {
           console.error('❌ Stream generation error:', streamError)
           throw streamError

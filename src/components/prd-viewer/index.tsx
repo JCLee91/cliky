@@ -26,7 +26,7 @@ export function PRDViewer({ content, isGenerating, projectName }: PRDViewerProps
     try {
       await navigator.clipboard.writeText(content)
       setIsCopied(true)
-      toast.success('PRD copied to clipboard!')
+      // Success toast removed
       setTimeout(() => setIsCopied(false), 2000)
     } catch (error) {
       toast.error('Failed to copy.')

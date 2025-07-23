@@ -24,11 +24,11 @@ const COMPLEXITY_KEYWORDS = [
 /**
  * 태스크의 복잡도를 계산합니다 (0-10 점수)
  */
-export function calculateTaskComplexity(task: Task): number {
+export function calculateTaskComplexity(task: Partial<Task>): number {
   let complexity = 0
 
   // 1. 예상 시간 기준 (6시간 이상: +3점)
-  const estimatedHours = parseEstimatedHours(task.estimated_time)
+  const estimatedHours = parseEstimatedHours(task.estimated_time || '')
   if (estimatedHours >= 6) {
     complexity += 3
   } else if (estimatedHours >= 4) {

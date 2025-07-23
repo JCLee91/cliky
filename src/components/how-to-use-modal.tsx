@@ -101,14 +101,14 @@ When you've read the documentation and understand the project and these instruct
                 In Claude, Cursor, or any other AI development tool, input the following prompt:
               </p>
               <div className="bg-muted/50 p-4 rounded-md relative">
-                <pre className="text-xs font-mono whitespace-pre-wrap pr-12 max-h-32 overflow-y-auto">
+                <pre className="text-xs font-mono whitespace-pre-wrap pr-16 max-h-24 overflow-y-auto">
 {promptText}
                 </pre>
                 <Button
                   size="sm"
                   variant="ghost"
                   onClick={handleCopyPrompt}
-                  className="absolute top-3 right-3"
+                  className="absolute top-3 right-10"
                 >
                   {copiedPrompt ? (
                     <CheckCircle2 className="w-4 h-4 text-green-600" />

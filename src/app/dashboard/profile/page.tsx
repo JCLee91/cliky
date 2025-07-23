@@ -29,7 +29,6 @@ export default function ProfilePage() {
       const { data: { user } } = await supabase.auth.getUser()
       
       if (!user) return
-      }
 
       setUser(user)
       setFullName(user.user_metadata?.full_name || '')

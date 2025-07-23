@@ -74,15 +74,39 @@ export default function ProfilePage() {
       }
 
       const file = event.target.files[0]
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${user.id}-${Math.random()}.${fileExt}`
-      const filePath = `avatars/${fileName}`
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('File size must be less than 5MB')
+        return
+      }
 
-      const { error: uploadError } = await supabase.storage
+      // Validate file type
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+      if (!validTypes.includes(file.type)) {
+        toast.error('Please upload a valid image file (JPEG, PNG, GIF, or WebP)')
+        return
+      }
+
+      const fileExt = file.name.split('.').pop()?.toLowerCase()
+      const fileName = `${user.id}-${Date.now()}.${fileExt}`
+      const filePath = `${user.id}/${fileName}`
+
+      // Delete old avatar if exists
+      if (avatarUrl && avatarUrl.includes('supabase.co/storage')) {
+        const oldPath = avatarUrl.split('/').slice(-2).join('/')
+        await supabase.storage.from('avatars').remove([oldPath])
+      }
+
+      const { error: uploadError, data: uploadData } = await supabase.storage
         .from('avatars')
-        .upload(filePath, file)
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        })
 
       if (uploadError) {
+        console.error('Upload error:', uploadError)
         throw uploadError
       }
 
@@ -92,14 +116,26 @@ export default function ProfilePage() {
 
       setAvatarUrl(data.publicUrl)
       
-      await supabase.auth.updateUser({
+      const { error: updateError } = await supabase.auth.updateUser({
         data: { avatar_url: data.publicUrl }
       })
+
+      if (updateError) {
+        throw updateError
+      }
       
       toast.success('Avatar uploaded successfully')
     } catch (error: any) {
       console.error('Error uploading avatar:', error)
-      toast.error('Failed to upload avatar')
+      const errorMessage = error.message || 'Failed to upload avatar'
+      
+      if (errorMessage.includes('not found')) {
+        toast.error('Storage bucket not configured. Please contact support.')
+      } else if (errorMessage.includes('policy')) {
+        toast.error('Permission denied. Please try again.')
+      } else {
+        toast.error(errorMessage)
+      }
     }
   }
 

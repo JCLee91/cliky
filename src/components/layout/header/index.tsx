@@ -49,7 +49,7 @@ export function Header({ onMenuClick, className }: HeaderProps) {
           {/* Actions */}
           <div className="flex items-center gap-2 ml-auto">
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={() => setShowHowToUse(true)}
               className="gap-2"

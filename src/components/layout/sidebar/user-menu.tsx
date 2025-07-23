@@ -29,6 +29,30 @@ export function UserMenu({ collapsed = false }: UserMenuProps) {
       setUser(user)
     }
     getUser()
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session?.user) {
+          setUser(session.user)
+        }
+      }
+    )
+
+    // Listen for profile updates
+    const handleProfileUpdate = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setUser(user)
+      }
+    }
+
+    window.addEventListener('userProfileUpdated', handleProfileUpdate)
+
+    return () => {
+      subscription.unsubscribe()
+      window.removeEventListener('userProfileUpdated', handleProfileUpdate)
+    }
   }, [])
 
   const handleSignOut = async () => {

@@ -35,18 +35,13 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
     stop
   } = useCompletion({
     api: '/api/taskmaster',
+    streamProtocol: 'text', // Explicitly set stream protocol
     onResponse: async (response) => {
       if (!response.ok) {
-        try {
-          const errorData = await response.json()
-          const errorMessage = errorData.error || errorData.details || 'Failed to generate tasks'
-          console.error('Task generation error:', errorMessage)
-          const errorCallback = callbacksRef.current.onError || onError
-          errorCallback?.(new Error(errorMessage))
-        } catch {
-          const errorCallback = callbacksRef.current.onError || onError
-          errorCallback?.(new Error(`HTTP ${response.status}: Failed to generate tasks`))
-        }
+        console.error('Task generation response error:', response.status, response.statusText)
+        // Don't try to read the body here - it will be read by the SDK
+        const errorCallback = callbacksRef.current.onError || onError
+        errorCallback?.(new Error(`HTTP ${response.status}: ${response.statusText}`))
       }
     },
     onFinish: async (prompt, completion) => {
@@ -144,7 +139,7 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
 
   // 실시간으로 스트리밍 중인 completion을 파싱하여 태스크 추가
   useEffect(() => {
-    if (!completion || !isLoading) return
+    if (!completion || !isLoading || isParsingComplete) return
 
     // 디바운싱을 위한 타이머
     const debounceTimer = setTimeout(() => {
@@ -209,7 +204,7 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
     return () => {
       clearTimeout(debounceTimer)
     }
-  }, [completion, isLoading])
+  }, [completion, isLoading, isParsingComplete])
 
   const generateTasksStream = async (
     project: Project,
@@ -223,6 +218,7 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
       // Reset state
       setParsedTasks([])
       setIsParsingComplete(false)
+      processedLinesRef.current = 0 // Reset processed lines counter
       
       // Store dynamic callbacks if provided
       if (dynamicCallbacks) {
@@ -245,6 +241,7 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
         }
       })
     } catch (err) {
+      console.error('generateTasksStream error:', err)
       const error = err instanceof Error ? err : new Error('Task generation failed')
       toast.error(error.message)
       const errorCallback = callbacksRef.current.onError || onError

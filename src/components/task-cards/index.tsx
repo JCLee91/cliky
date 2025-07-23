@@ -88,24 +88,26 @@ export function TaskCards({
             </div>
           </div>
         </CardHeader>
-        <CardContent className="flex-1 flex items-center justify-center">
-          <AnimatePresence mode="wait">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3 }}
-            >
-              <EmptyMessage
-                icon={FileText}
-                message={isPRDGenerating ? "Waiting for PRD generation to complete..." : "Ready to generate tasks"}
-                description={isPRDGenerating ? "Tasks will be available once the PRD is ready" : "AI will analyze the PRD and create a task list"}
-                action={!isPRDGenerating && onBreakdownToTasks ? {
-                  label: "Break Down to Tasks",
-                  onClick: onBreakdownToTasks
-                } : undefined}
-              />
-            </motion.div>
-          </AnimatePresence>
+        <CardContent className="flex-1 relative">
+          <div className="absolute inset-x-0 top-16 flex justify-center">
+            <AnimatePresence mode="wait">
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <EmptyMessage
+                  icon={FileText}
+                  message={isPRDGenerating ? "Waiting for PRD generation to complete..." : "Ready to generate tasks"}
+                  description={isPRDGenerating ? "Tasks will be available once the PRD is ready" : "AI will analyze the PRD and create a task list"}
+                  action={!isPRDGenerating && onBreakdownToTasks ? {
+                    label: "Break Down to Tasks",
+                    onClick: onBreakdownToTasks
+                  } : undefined}
+                />
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </CardContent>
       </Card>
     )

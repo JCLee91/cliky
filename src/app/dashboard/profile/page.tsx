@@ -57,8 +57,15 @@ export default function ProfilePage() {
 
       if (error) throw error
 
+      // Refresh the user data to trigger auth state change
+      const { data: { user: updatedUser } } = await supabase.auth.getUser()
+      if (updatedUser) {
+        setUser(updatedUser)
+        // Manually trigger auth state change event
+        window.dispatchEvent(new Event('userProfileUpdated'))
+      }
+
       toast.success('Profile updated successfully')
-      await getProfile()
     } catch (error: any) {
       console.error('Error updating profile:', error)
       toast.error(error.message || 'Failed to update profile')
@@ -122,6 +129,13 @@ export default function ProfilePage() {
 
       if (updateError) {
         throw updateError
+      }
+      
+      // Refresh user data to trigger sidebar update
+      const { data: { user: updatedUser } } = await supabase.auth.getUser()
+      if (updatedUser) {
+        setUser(updatedUser)
+        window.dispatchEvent(new Event('userProfileUpdated'))
       }
       
       toast.success('Avatar uploaded successfully')

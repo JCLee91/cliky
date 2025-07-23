@@ -112,9 +112,11 @@ export default function DashboardPage() {
     }
 
     try {
-      await generateTasksStream(prdContent, selectedProject.id)
+      await generateTasksStream(selectedProject, prdContent)
     } catch (error) {
-      toast.error('Failed to generate tasks')
+      console.error('handleBreakdownToTasks error:', error)
+      // Error is already handled in generateTasksStream with toast notification
+      // No need to show another toast here
     }
   }
 

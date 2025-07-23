@@ -149,7 +149,22 @@ const TaskMasterResponseSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
+    let body = await request.json()
+    
+    // Debug logging
+    console.log('=== TASKMASTER API DEBUG ===')
+    console.log('Received body:', JSON.stringify(body, null, 2))
+    console.log('Body keys:', Object.keys(body))
+    console.log('Has prompt?', 'prompt' in body)
+    console.log('Has action?', 'action' in body)
+    console.log('Body.body exists?', body.body !== undefined)
+    
+    // Handle useCompletion hook format
+    // The hook sends the body parameters directly merged with prompt
+    if ('prompt' in body && !body.action && body.body) {
+      console.log('useCompletion format detected - extracting body.body')
+      body = body.body
+    }
     
     // 액션별 스키마 검증
     let validatedBody
@@ -186,8 +201,21 @@ export async function POST(request: NextRequest) {
           )
       }
     } catch (error) {
+      console.error('=== VALIDATION ERROR ===')
+      console.error('Error:', error)
+      console.error('Body:', JSON.stringify(body, null, 2))
+      console.error('Body type:', typeof body)
+      console.error('Body keys:', Object.keys(body))
+      console.error('======================')
+      
       return NextResponse.json(
-        { error: 'Invalid request format', details: error instanceof Error ? error.message : 'Validation failed' },
+        { 
+          error: 'Invalid request format', 
+          details: error instanceof Error ? error.message : 'Validation failed',
+          receivedBody: body,
+          receivedAction: body?.action,
+          expectedActions: ['parse-prd', 'expand-task', 'next-task', 'update-task', 'calculate-progress', 'generate-prd', 'generate-tasks-streaming', 'expand-complex-tasks']
+        },
         { status: 400 }
       )
     }

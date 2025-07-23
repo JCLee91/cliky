@@ -20,17 +20,15 @@ export default function ProfilePage() {
   const [avatarUrl, setAvatarUrl] = useState('')
 
   useEffect(() => {
-    getProfile()
+    checkAuthAndGetProfile()
   }, [])
 
-  async function getProfile() {
+  async function checkAuthAndGetProfile() {
     try {
       setLoading(true)
       const { data: { user } } = await supabase.auth.getUser()
       
-      if (!user) {
-        router.push('/login')
-        return
+      if (!user) return
       }
 
       setUser(user)

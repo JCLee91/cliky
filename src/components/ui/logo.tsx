@@ -20,9 +20,25 @@ export function Logo({ variant = 'full', className = '', width = 120, height = 3
     setMounted(true)
   }, [])
 
+  // Default to light theme logo before mount to prevent flashing
+  const defaultLogoSrc = variant === 'symbol' 
+    ? '/image/logo_symbol.png'
+    : '/image/logo.png'
+
   if (!mounted) {
-    // Return a placeholder with same dimensions to prevent layout shift
-    return <div className={className} style={{ width, height }} />
+    // Return default logo while mounting to prevent layout shift
+    return (
+      <div className={className} style={{ width, height, position: 'relative' }}>
+        <Image
+          src={defaultLogoSrc}
+          alt="Logo"
+          fill
+          sizes={`${width}px`}
+          style={{ objectFit: 'contain' }}
+          priority={priority}
+        />
+      </div>
+    )
   }
 
   const isDark = theme === 'dark' || resolvedTheme === 'dark'

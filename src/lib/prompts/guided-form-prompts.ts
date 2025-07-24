@@ -30,7 +30,7 @@ IMPORTANT: Language Matching Rule
 - Match ALL text including headings to the input language
 - Technical terms (e.g., API names, library names) can remain in English
 
-Format your response as JSON:
+Respond with ONLY valid JSON, no markdown formatting or code blocks:
 {
   "optionA": "Problem Definition: ...\nTarget Users: ...\nUsage Scenario:\n1. ...\n2. ...\n3. ...\n4. ...\nCore Value: ...",
   "optionB": "Problem Definition: ...\nTarget Users: ...\nUsage Scenario:\n1. ...\n2. ...\n3. ...\n4. ...\nCore Value: ..."
@@ -57,7 +57,7 @@ IMPORTANT: Language Matching Rule
 - Match ALL text including step descriptions to the input language
 - Technical terms (e.g., API names, library names) can remain in English
 
-Format your response as JSON with this structure:
+Respond with ONLY valid JSON, no markdown formatting or code blocks:
 {
   "optionA": "User flow description for option A",
   "optionB": "User flow description for option B"
@@ -92,7 +92,7 @@ IMPORTANT: Language Matching Rule
 - Match ALL text including feature descriptions and role names to the input language
 - Technical terms (e.g., API names, library names) can remain in English
 
-Format your response as JSON with this structure:
+Respond with ONLY valid JSON, no markdown formatting or code blocks:
 {
   "features": [
     "Feature 1 description",
@@ -134,7 +134,7 @@ IMPORTANT: Language Matching Rule
 - But any descriptive text or explanations should match the input language
 - If the input is in Korean, category names can be in Korean (e.g., "프론트엔드" instead of "frontend")
 
-Format your response as JSON with this structure:
+Respond with ONLY valid JSON, no markdown formatting or code blocks:
 {
   "frontend": ["Tech 1", "Tech 2", ...],
   "backend": ["Tech 1", "Tech 2", ...],

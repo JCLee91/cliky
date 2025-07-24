@@ -31,6 +31,11 @@ export function useAIGeneration({
       
       if (!response.ok) {
         const errorData = await response.json()
+        console.error('API Response Error:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorData
+        })
         throw new Error(errorData.error || 'Failed to generate')
       }
       

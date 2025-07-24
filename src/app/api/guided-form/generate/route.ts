@@ -95,7 +95,19 @@ export async function POST(request: NextRequest) {
     // Parse the JSON response with error handling
     let parsed
     try {
-      parsed = JSON.parse(text)
+      // Remove markdown code blocks if present
+      let cleanText = text.trim()
+      if (cleanText.startsWith('```json')) {
+        cleanText = cleanText.substring(7) // Remove ```json
+      } else if (cleanText.startsWith('```')) {
+        cleanText = cleanText.substring(3) // Remove ```
+      }
+      if (cleanText.endsWith('```')) {
+        cleanText = cleanText.substring(0, cleanText.length - 3) // Remove trailing ```
+      }
+      cleanText = cleanText.trim()
+      
+      parsed = JSON.parse(cleanText)
     } catch (parseError) {
       console.error('Failed to parse AI response:')
       console.error('Raw text:', text)

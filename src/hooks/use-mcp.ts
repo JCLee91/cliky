@@ -16,6 +16,7 @@ export function useMCP(options?: UseMCPOptions) {
   const [isGeneratingTasks, setIsGeneratingTasks] = useState(false)
   const [tasks, setTasks] = useState<Task[]>([])
   const [error, setError] = useState<Error | null>(null)
+  const [lastFetchTime, setLastFetchTime] = useState<Record<string, number>>({})
 
   const generateTasks = useCallback(async (
     project: Project,
@@ -124,10 +125,16 @@ export function useMCP(options?: UseMCPOptions) {
         if (cached) {
           setTasks(cached)
           
-          // Background refresh
-          setTimeout(() => {
-            fetchTasks(projectId, true)
-          }, 1000)
+          // Only background refresh if data is older than 30 seconds
+          const lastFetch = lastFetchTime[projectId] || 0
+          const timeSinceLastFetch = Date.now() - lastFetch
+          
+          if (timeSinceLastFetch > 30000) { // 30 seconds
+            setTimeout(() => {
+              fetchTasks(projectId, true)
+            }, 1000)
+          }
+          
           return cached
         }
       }
@@ -146,6 +153,9 @@ export function useMCP(options?: UseMCPOptions) {
       // Update state and cache
       setTasks(fetchedTasks)
       CacheManager.set(CACHE_KEYS.TASKS(projectId), fetchedTasks)
+      
+      // Record fetch time
+      setLastFetchTime(prev => ({ ...prev, [projectId]: Date.now() }))
       
       return fetchedTasks
     } catch (err) {

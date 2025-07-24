@@ -29,7 +29,7 @@ export default function MockDashboard() {
       selectedProject={selectedProject}
       onProjectSelect={setSelectedProject}
     >
-      <div className="p-6 h-full">
+      <div className="p-6 h-full relative">
         <AnimatePresence mode="wait">
           {selectedProject ? (
             <motion.div
@@ -104,19 +104,19 @@ export default function MockDashboard() {
             </motion.div>
           )}
         </AnimatePresence>
+        
+        {/* Onboarding Hint for New Project button */}
+        {selectedProject && (
+          <OnboardingHint
+            direction="right"
+            message="Try it with your own idea!"
+            targetPosition={{ 
+              top: '35px', 
+              right: '200px' 
+            }}
+          />
+        )}
       </div>
-      
-      {/* Onboarding Hint for New Project button */}
-      {selectedProject && (
-        <OnboardingHint
-          direction="right"
-          message="Try it with your own idea!"
-          targetPosition={{ 
-            top: '35px', 
-            right: '200px' 
-          }}
-        />
-      )}
     </MockDashboardLayout>
   )
 }

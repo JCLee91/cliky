@@ -10,19 +10,14 @@ import { AdditionalNotesField } from '../components/additional-notes-field'
 import { StepHeader } from '../components/step-header'
 import { guidedFormStyles } from '../styles/common-styles'
 
-interface ProductDescriptionStepProps {
-  isGenerating: boolean
-  setIsGenerating: (value: boolean) => void
-}
-
-export function ProductDescriptionStep({ isGenerating, setIsGenerating }: ProductDescriptionStepProps) {
+export function ProductDescriptionStep() {
   const form = useFormContext<GuidedProjectFormData>()
   
   const name = form.watch('name')
   const idea = form.watch('idea')
   const selectedChoice = form.watch('productDescriptionChoice')
   
-  const { generate, hasGenerated } = useAIGeneration({
+  const { generate, hasGenerated, isGenerating } = useAIGeneration({
     endpoint: '/api/guided-form/generate',
     onSuccess: (data) => {
       form.setValue('productDescriptionOptionA', data.optionA)
@@ -34,37 +29,28 @@ export function ProductDescriptionStep({ isGenerating, setIsGenerating }: Produc
   
   useEffect(() => {
     if (!hasGenerated && name && idea) {
-      setIsGenerating(true)
       generate({ 
         type: 'product-descriptions',
         data: { name, idea }
-      }).finally(() => setIsGenerating(false))
+      })
     }
-  }, [name, idea, hasGenerated, generate, setIsGenerating])
+  }, [name, idea, hasGenerated, generate])
 
   const parseProductDescription = (content: string) => {
+    // Simple regex to add line breaks before each section
+    const formatted = content
+      .replace(/Target Users:/g, '\n\nTarget Users:')
+      .replace(/주요 사용자:/g, '\n\n주요 사용자:')
+      .replace(/Usage Scenario:/g, '\n\nUsage Scenario:')
+      .replace(/사용 시나리오:/g, '\n\n사용 시나리오:')
+      .replace(/Core Value:/g, '\n\nCore Value:')
+      .replace(/핵심 가치:/g, '\n\n핵심 가치:')
+      .replace(/(\d+\.\s)/g, '\n  $1') // Add line break and indent before numbers
+    
     return (
-      <div className={`${guidedFormStyles.mutedSmall} whitespace-pre-wrap space-y-3`}>
-        {content.split('\n').map((line, idx) => {
-          if (line.startsWith('문제 정의:') || line.startsWith('Problem Definition:')) {
-            const [label, ...content] = line.split(': ')
-            return <div key={idx}><span className="font-semibold text-foreground">{label}:</span> {content.join(': ')}</div>
-          } else if (line.startsWith('주요 사용자:') || line.startsWith('Target Users:')) {
-            const [label, ...content] = line.split(': ')
-            return <div key={idx}><span className="font-semibold text-foreground">{label}:</span> {content.join(': ')}</div>
-          } else if (line.startsWith('사용 시나리오:') || line.startsWith('Usage Scenario:')) {
-            const [label] = line.split(': ')
-            return <div key={idx}><span className="font-semibold text-foreground">{label}:</span></div>
-          } else if (line.startsWith('핵심 가치:') || line.startsWith('Core Value:')) {
-            const [label, ...content] = line.split(': ')
-            return <div key={idx}><span className="font-semibold text-foreground">{label}:</span> {content.join(': ')}</div>
-          } else if (line.match(/^\d\./)) {
-            return <div key={idx} className="ml-4">{line}</div>
-          } else {
-            return line ? <div key={idx}>{line}</div> : null
-          }
-        })}
-      </div>
+      <p className={`${guidedFormStyles.mutedSmall} whitespace-pre-wrap`}>
+        {formatted}
+      </p>
     )
   }
 
@@ -76,7 +62,7 @@ export function ProductDescriptionStep({ isGenerating, setIsGenerating }: Produc
       />
 
       <div className={guidedFormStyles.gridTwoColumn}>
-        {isGenerating ? (
+        {isGenerating && !form.watch('productDescriptionOptionA') ? (
           <>
             <CardSkeleton showHeader={false} lines={4} />
             <CardSkeleton showHeader={false} lines={4} />

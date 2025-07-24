@@ -13,12 +13,7 @@ import { AdditionalNotesField } from '../components/additional-notes-field'
 import { StepHeader } from '../components/step-header'
 import { guidedFormStyles } from '../styles/common-styles'
 
-interface FeaturesRolesStepProps {
-  isGenerating: boolean
-  setIsGenerating: (value: boolean) => void
-}
-
-export function FeaturesRolesStep({ isGenerating, setIsGenerating }: FeaturesRolesStepProps) {
+export function FeaturesRolesStep() {
   const form = useFormContext<GuidedProjectFormData>()
   
   const name = form.watch('name')
@@ -32,7 +27,7 @@ export function FeaturesRolesStep({ isGenerating, setIsGenerating }: FeaturesRol
   const suggestedFeatures = form.watch('suggestedFeatures') || []
   const suggestedRoles = form.watch('suggestedRoles') || []
   
-  const { generate, hasGenerated } = useAIGeneration({
+  const { generate, hasGenerated, isGenerating } = useAIGeneration({
     endpoint: '/api/guided-form/generate',
     onSuccess: (data) => {
       form.setValue('suggestedFeatures', data.features)
@@ -55,7 +50,6 @@ export function FeaturesRolesStep({ isGenerating, setIsGenerating }: FeaturesRol
         ? form.getValues('userFlowOptionA')
         : form.getValues('userFlowOptionB')
       
-      setIsGenerating(true)
       generate({ 
         type: 'features-roles',
         data: {
@@ -65,9 +59,9 @@ export function FeaturesRolesStep({ isGenerating, setIsGenerating }: FeaturesRol
           userFlow: selectedFlow,
           userFlowNotes
         }
-      }).finally(() => setIsGenerating(false))
+      })
     }
-  }, [name, idea, productDescriptionChoice, userFlowChoice, hasGenerated, generate, setIsGenerating])
+  }, [name, idea, productDescriptionChoice, userFlowChoice, hasGenerated, generate])
 
   const toggleFeature = (feature: string) => {
     const current = form.getValues('coreFeatures') || []
@@ -104,7 +98,7 @@ export function FeaturesRolesStep({ isGenerating, setIsGenerating }: FeaturesRol
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {isGenerating ? (
+            {isGenerating && !form.watch('suggestedFeatures')?.length ? (
               <>
                 <Skeleton className="h-8 w-full" />
                 <Skeleton className="h-8 w-full" />
@@ -142,7 +136,7 @@ export function FeaturesRolesStep({ isGenerating, setIsGenerating }: FeaturesRol
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {isGenerating ? (
+            {isGenerating && !form.watch('suggestedRoles')?.length ? (
               <>
                 <Skeleton className="h-8 w-full" />
                 <Skeleton className="h-8 w-full" />

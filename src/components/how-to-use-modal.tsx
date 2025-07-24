@@ -16,7 +16,7 @@ export function HowToUseModal({ open, onOpenChange }: HowToUseModalProps) {
   const { toast } = useToast()
   
   const promptText = `## Instruction 
-1. Read both the PRD and the Tasks file in the \`root/DOC\` folder of this project to familiarize yourself with the project you'll be developing. 
+1. Read both the PRD and the Tasks file in the \`root/Cliky-DOC\` folder of this project to familiarize yourself with the project you'll be developing. 
 2. Work through the tasks in the order listed in the Tasks documentation. 
 3. Update your progress in the Tasks file as you complete each task. 
 4. Anything I have to do myself (ex setting environment variables), write it all out in a MD file in the \`root/SET-GUIDE\` folder at the end of the task.
@@ -79,7 +79,7 @@ When you've read the documentation and understand the project and these instruct
               <div className="bg-muted/50 p-3 rounded-md">
                 <pre className="text-xs font-mono">
 {`📁 your-project/
-  └── 📁 DOC/
+  └── 📁 Cliky-DOC/
       ├── 📄 PRD.md
       └── 📄 tasks.json (or tasks.md)`}
                 </pre>

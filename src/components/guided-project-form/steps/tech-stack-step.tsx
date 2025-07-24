@@ -13,18 +13,13 @@ import { AdditionalNotesField } from '../components/additional-notes-field'
 import { StepHeader } from '../components/step-header'
 import { guidedFormStyles } from '../styles/common-styles'
 
-interface TechStackStepProps {
-  isGenerating: boolean
-  setIsGenerating: (value: boolean) => void
-}
-
 interface TechCategory {
   name: string
   icon: React.ReactNode
   items: string[]
 }
 
-export function TechStackStep({ isGenerating, setIsGenerating }: TechStackStepProps) {
+export function TechStackStep() {
   const form = useFormContext<GuidedProjectFormData>()
   const [techCategories, setTechCategories] = useState<TechCategory[]>([])
   
@@ -37,7 +32,7 @@ export function TechStackStep({ isGenerating, setIsGenerating }: TechStackStepPr
   
   const selectedTech = form.watch('techStack') || []
   
-  const { generate, hasGenerated } = useAIGeneration({
+  const { generate, hasGenerated, isGenerating } = useAIGeneration({
     endpoint: '/api/guided-form/generate',
     onSuccess: (data) => {
       // Organize tech stack into categories
@@ -84,7 +79,6 @@ export function TechStackStep({ isGenerating, setIsGenerating }: TechStackStepPr
         ? form.getValues('userFlowOptionA')
         : form.getValues('userFlowOptionB')
       
-      setIsGenerating(true)
       generate({ 
         type: 'tech-stack',
         data: {
@@ -95,9 +89,9 @@ export function TechStackStep({ isGenerating, setIsGenerating }: TechStackStepPr
           coreFeatures,
           featuresNotes
         }
-      }).finally(() => setIsGenerating(false))
+      })
     }
-  }, [name, idea, productDescriptionChoice, userFlowChoice, hasGenerated, generate, setIsGenerating])
+  }, [name, idea, productDescriptionChoice, userFlowChoice, hasGenerated, generate])
 
   const toggleTech = (tech: string) => {
     const current = form.getValues('techStack') || []
@@ -115,7 +109,7 @@ export function TechStackStep({ isGenerating, setIsGenerating }: TechStackStepPr
         description="Based on your project requirements, here's our recommended technology stack."
       />
 
-      {isGenerating ? (
+      {isGenerating && !techCategories.length ? (
         <div className={guidedFormStyles.gridTwoColumn}>
           {[1, 2, 3, 4].map((i) => (
             <Card key={i}>

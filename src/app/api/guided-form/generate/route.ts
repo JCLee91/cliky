@@ -107,7 +107,24 @@ export async function POST(request: NextRequest) {
       }
       cleanText = cleanText.trim()
       
-      parsed = JSON.parse(cleanText)
+      // Try to parse as-is first
+      try {
+        parsed = JSON.parse(cleanText)
+      } catch (firstError) {
+        // If that fails, try to fix common issues
+        console.log('First parse attempt failed, trying to fix JSON...')
+        
+        // Replace actual newlines within string values with escaped newlines
+        // This regex looks for content between quotes and replaces newlines
+        cleanText = cleanText.replace(/"([^"]*)"/g, (match, content) => {
+          // Replace newlines with \n
+          const fixed = content.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
+          return `"${fixed}"`
+        })
+        
+        // Try parsing again
+        parsed = JSON.parse(cleanText)
+      }
     } catch (parseError) {
       console.error('Failed to parse AI response:')
       console.error('Raw text:', text)

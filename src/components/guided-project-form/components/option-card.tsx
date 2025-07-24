@@ -36,13 +36,14 @@ export function OptionCard({
         }`}
         onClick={onClick}
       >
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">{title || defaultTitle}</CardTitle>
-            {isSelected && <Badge variant="default">Selected</Badge>}
-          </div>
-        </CardHeader>
-        <CardContent>
+        {isSelected && (
+          <CardHeader className="pb-2">
+            <div className="flex justify-end">
+              <Badge variant="default">Selected</Badge>
+            </div>
+          </CardHeader>
+        )}
+        <CardContent className={!isSelected ? 'pt-6' : ''}>
           {content ? (
             parseContent ? (
               parseContent(content)

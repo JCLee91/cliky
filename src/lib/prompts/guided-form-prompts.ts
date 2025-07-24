@@ -25,15 +25,15 @@ Important guidelines:
 
 IMPORTANT: Language Matching Rule
 - Detect the language of the user's input and respond in the SAME language
-- If the input is in Korean, write the entire response in Korean
-- If the input is in English, write the entire response in English
-- Match ALL text including headings to the input language
+- If the input is in Korean, use Korean labels: 문제 정의, 주요 사용자, 사용 시나리오, 핵심 가치
+- If the input is in English, use English labels: Problem Definition, Target Users, Usage Scenario, Core Value
+- Match ALL text including headings/labels to the input language
 - Technical terms (e.g., API names, library names) can remain in English
 
 Respond with ONLY valid JSON, no markdown formatting or code blocks:
 {
-  "optionA": "Problem Definition: ...\nTarget Users: ...\nUsage Scenario:\n1. ...\n2. ...\n3. ...\n4. ...\nCore Value: ...",
-  "optionB": "Problem Definition: ...\nTarget Users: ...\nUsage Scenario:\n1. ...\n2. ...\n3. ...\n4. ...\nCore Value: ..."
+  "optionA": "Label1: ...\nLabel2: ...\nLabel3:\n1. ...\n2. ...\n3. ...\n4. ...\nLabel4: ...",
+  "optionB": "Label1: ...\nLabel2: ...\nLabel3:\n1. ...\n2. ...\n3. ...\n4. ...\nLabel4: ..."
 }`
 
 export const USER_FLOW_PROMPT = `You are a UX expert. Based on the following project details, generate two different user flow approaches.
@@ -50,6 +50,8 @@ Generate two distinct user flow options (Option A and Option B) that:
 4. Be specific about key interactions and decision points
 5. Consider different user types or use cases
 
+Format each flow as a numbered list with clear steps.
+
 IMPORTANT: Language Matching Rule
 - Detect the language of the user's input and respond in the SAME language
 - If the input is in Korean, write the entire response in Korean
@@ -59,8 +61,8 @@ IMPORTANT: Language Matching Rule
 
 Respond with ONLY valid JSON, no markdown formatting or code blocks:
 {
-  "optionA": "User flow description for option A",
-  "optionB": "User flow description for option B"
+  "optionA": "1. First step description\n2. Second step description\n3. Third step description\n4. Fourth step description\n5. Fifth step description",
+  "optionB": "1. First step description\n2. Second step description\n3. Third step description\n4. Fourth step description\n5. Fifth step description"
 }`
 
 export const FEATURES_ROLES_PROMPT = `You are a product manager. Based on the following project details, recommend core features and user roles.

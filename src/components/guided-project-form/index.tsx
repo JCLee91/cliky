@@ -50,7 +50,6 @@ const TOTAL_STEPS = 5
 
 export function GuidedProjectForm({ open, onOpenChange, onSubmit, loading = false }: GuidedProjectFormProps) {
   const [currentStep, setCurrentStep] = useState(1)
-  const [isGenerating, setIsGenerating] = useState(false)
   
   const form = useForm<FormData>({
     resolver: zodResolver(guidedProjectFormSchema),
@@ -128,13 +127,13 @@ export function GuidedProjectForm({ open, onOpenChange, onSubmit, loading = fals
       case 1:
         return <IdeaStep />
       case 2:
-        return <ProductDescriptionStep isGenerating={isGenerating} setIsGenerating={setIsGenerating} />
+        return <ProductDescriptionStep />
       case 3:
-        return <UserFlowStep isGenerating={isGenerating} setIsGenerating={setIsGenerating} />
+        return <UserFlowStep />
       case 4:
-        return <FeaturesRolesStep isGenerating={isGenerating} setIsGenerating={setIsGenerating} />
+        return <FeaturesRolesStep />
       case 5:
-        return <TechStackStep isGenerating={isGenerating} setIsGenerating={setIsGenerating} />
+        return <TechStackStep />
       default:
         return null
     }
@@ -200,7 +199,7 @@ export function GuidedProjectForm({ open, onOpenChange, onSubmit, loading = fals
               <Button
                 variant="outline"
                 onClick={handlePrevious}
-                disabled={isGenerating}
+                disabled={false}
                 className="gap-2"
               >
                 <ChevronLeft className={guidedFormStyles.iconSmall} />
@@ -214,7 +213,7 @@ export function GuidedProjectForm({ open, onOpenChange, onSubmit, loading = fals
               {currentStep === TOTAL_STEPS ? (
                 <Button
                   onClick={form.handleSubmit(handleSubmit)}
-                  disabled={!canProceed() || loading || isGenerating}
+                  disabled={!canProceed() || loading}
                   className="gap-2"
                 >
                   {loading ? 'Creating...' : 'Generate PRD'}
@@ -222,7 +221,7 @@ export function GuidedProjectForm({ open, onOpenChange, onSubmit, loading = fals
               ) : (
                 <Button
                   onClick={handleNext}
-                  disabled={!canProceed() || isGenerating}
+                  disabled={!canProceed()}
                   className="gap-2"
                 >
                   Next

@@ -53,6 +53,23 @@ export function useAIGeneration({
     }
   }
 
+  // Store previous dependencies to detect actual changes
+  const [prevDependencies, setPrevDependencies] = useState<any[]>([])
+  
+  // Reset hasGenerated only when dependencies actually change values
+  useEffect(() => {
+    const hasActuallyChanged = dependencies.some((dep, index) => 
+      dep !== prevDependencies[index]
+    )
+    
+    if (hasActuallyChanged && dependencies.length > 0) {
+      setPrevDependencies([...dependencies])
+      if (hasGenerated) {
+        setHasGenerated(false)
+      }
+    }
+  }, dependencies)
+
   useEffect(() => {
     let mounted = true
     

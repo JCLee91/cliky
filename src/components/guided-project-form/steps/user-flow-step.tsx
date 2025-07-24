@@ -10,12 +10,7 @@ import { AdditionalNotesField } from '../components/additional-notes-field'
 import { StepHeader } from '../components/step-header'
 import { guidedFormStyles } from '../styles/common-styles'
 
-interface UserFlowStepProps {
-  isGenerating: boolean
-  setIsGenerating: (value: boolean) => void
-}
-
-export function UserFlowStep({ isGenerating, setIsGenerating }: UserFlowStepProps) {
+export function UserFlowStep() {
   const form = useFormContext<GuidedProjectFormData>()
   
   const name = form.watch('name')
@@ -24,7 +19,7 @@ export function UserFlowStep({ isGenerating, setIsGenerating }: UserFlowStepProp
   const productDescriptionNotes = form.watch('productDescriptionNotes')
   const selectedChoice = form.watch('userFlowChoice')
   
-  const { generate, hasGenerated } = useAIGeneration({
+  const { generate, hasGenerated, isGenerating } = useAIGeneration({
     endpoint: '/api/guided-form/generate',
     onSuccess: (data) => {
       form.setValue('userFlowOptionA', data.optionA)
@@ -40,7 +35,6 @@ export function UserFlowStep({ isGenerating, setIsGenerating }: UserFlowStepProp
         ? form.getValues('productDescriptionOptionA')
         : form.getValues('productDescriptionOptionB')
       
-      setIsGenerating(true)
       generate({ 
         type: 'user-flows',
         data: {
@@ -49,10 +43,22 @@ export function UserFlowStep({ isGenerating, setIsGenerating }: UserFlowStepProp
           productDescription: selectedDescription,
           productDescriptionNotes: productDescriptionNotes ? `Additional Notes: ${productDescriptionNotes}` : ''
         }
-      }).finally(() => setIsGenerating(false))
+      })
     }
-  }, [name, idea, productDescriptionChoice, hasGenerated, generate, setIsGenerating])
+  }, [name, idea, productDescriptionChoice, hasGenerated, generate])
 
+  const parseUserFlow = (content: string) => {
+    // Format numbered list with proper line breaks
+    const formatted = content
+      .replace(/(\d+\.\s)/g, '\n$1') // Add line break before numbers
+      .trim()
+    
+    return (
+      <p className={`${guidedFormStyles.mutedSmall} whitespace-pre-wrap`}>
+        {formatted}
+      </p>
+    )
+  }
 
   return (
     <div className={guidedFormStyles.stepContainer}>
@@ -62,7 +68,7 @@ export function UserFlowStep({ isGenerating, setIsGenerating }: UserFlowStepProp
       />
 
       <div className={guidedFormStyles.gridTwoColumn}>
-        {isGenerating ? (
+        {isGenerating && !form.watch('userFlowOptionA') ? (
           <>
             <CardSkeleton showHeader={false} lines={5} />
             <CardSkeleton showHeader={false} lines={5} />
@@ -71,17 +77,17 @@ export function UserFlowStep({ isGenerating, setIsGenerating }: UserFlowStepProp
           <>
             <OptionCard
               option="A"
-              title="Flow A"
               content={form.watch('userFlowOptionA')}
               isSelected={selectedChoice === 'A'}
               onClick={() => form.setValue('userFlowChoice', 'A')}
+              parseContent={parseUserFlow}
             />
             <OptionCard
               option="B"
-              title="Flow B"
               content={form.watch('userFlowOptionB')}
               isSelected={selectedChoice === 'B'}
               onClick={() => form.setValue('userFlowChoice', 'B')}
+              parseContent={parseUserFlow}
             />
           </>
         )}

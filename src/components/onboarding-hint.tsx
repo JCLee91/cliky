@@ -33,7 +33,7 @@ export function OnboardingHint({
           ease: "easeInOut"
         }
       }}
-      className="fixed z-50 pointer-events-none"
+      className="absolute z-50 pointer-events-none"
       style={{
         ...targetPosition,
         transform: targetPosition.top === '50%' || targetPosition.left === '50%' 

@@ -123,6 +123,11 @@ export default function DashboardPage() {
     }
   }
 
+  // Fetch projects on mount
+  useEffect(() => {
+    fetchProjects()
+  }, [fetchProjects])
+
   // Fetch tasks when project is selected
   useEffect(() => {
     if (selectedProject?.id) {

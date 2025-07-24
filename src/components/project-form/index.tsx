@@ -169,7 +169,7 @@ export function ProjectForm({ open, onOpenChange, onSubmit, loading = false }: P
                 Previous
               </Button>
             ) : (
-              <div /> {/* Empty div for spacing */}
+              <div />
             )}
 
             <div className="flex gap-2">

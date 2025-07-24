@@ -19,7 +19,6 @@ interface ProjectStore {
   // Loading state
   isLoading: boolean
   hasInitialized: boolean
-  lastFetchTime: number
   
   // Actions
   updateProjectInStore: (id: string, updates: Partial<Project>) => void
@@ -34,7 +33,6 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
   isFormOpen: false,
   isLoading: false,
   hasInitialized: false,
-  lastFetchTime: 0,
   
   // Setters
   setProjects: (projects) => {
@@ -82,14 +80,6 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
         const cached = CacheManager.get<Project[]>(CACHE_KEYS.PROJECTS, 5)
         if (cached) {
           set({ projects: cached, hasInitialized: true })
-          
-          // Only refresh if data is older than 30 seconds
-          const timeSinceLastFetch = Date.now() - get().lastFetchTime
-          if (timeSinceLastFetch > 30000) {
-            setTimeout(() => {
-              get().fetchProjects(true)
-            }, 1000)
-          }
           return
         }
       }
@@ -116,7 +106,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
       
       // Update state and cache
       get().setProjects(projects)
-      set({ hasInitialized: true, lastFetchTime: Date.now() })
+      set({ hasInitialized: true })
       
     } catch (error) {
       console.error('[ProjectStore] Error:', error)

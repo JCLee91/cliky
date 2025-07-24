@@ -8,6 +8,12 @@ export class CacheManager {
   private static VERSION = '1.0.0' // Bump this to invalidate all caches
   
   static set<T>(key: string, data: T, ttlMinutes: number = 5): void {
+    // Check if we're in the browser
+    if (typeof window === 'undefined') {
+      console.log('[Cache] Skip save - not in browser')
+      return
+    }
+    
     try {
       const item: CacheItem<T> = {
         data,
@@ -22,6 +28,12 @@ export class CacheManager {
   }
   
   static get<T>(key: string, ttlMinutes: number = 5): T | null {
+    // Check if we're in the browser
+    if (typeof window === 'undefined') {
+      console.log('[Cache] Skip get - not in browser')
+      return null
+    }
+    
     try {
       const cached = localStorage.getItem(key)
       if (!cached) {
@@ -57,6 +69,8 @@ export class CacheManager {
   }
   
   static remove(key: string): void {
+    if (typeof window === 'undefined') return
+    
     try {
       localStorage.removeItem(key)
     } catch (error) {
@@ -65,6 +79,8 @@ export class CacheManager {
   }
   
   static clear(): void {
+    if (typeof window === 'undefined') return
+    
     try {
       // Only clear our app's cache keys
       const keys = Object.keys(localStorage)

@@ -76,6 +76,8 @@ export function UserMenu({ collapsed = false }: UserMenuProps) {
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('[UserMenu] Auth state changed:', event, !!session)
+        
         if (session?.user) {
           // Fetch profile from profiles table on auth change
           const { data: profile } = await supabase

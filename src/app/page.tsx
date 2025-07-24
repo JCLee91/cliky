@@ -12,6 +12,7 @@ import { MockDashboardLayout } from '@/components/mock-dashboard-layout'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ANIMATION_PRESETS } from '@/lib/animation-presets'
 import { mockProjects, mockTasks } from '@/lib/mock-data'
+import { OnboardingHint } from '@/components/onboarding-hint'
 
 export default function MockDashboard() {
   const router = useRouter()
@@ -93,7 +94,7 @@ export default function MockDashboard() {
                       message="Create your first project"
                       description="Enter your idea and AI will generate a PRD and task list"
                       action={{
-                        label: "Create New Project",
+                        label: "Start my project",
                         onClick: handleInteraction
                       }}
                     />
@@ -104,6 +105,18 @@ export default function MockDashboard() {
           )}
         </AnimatePresence>
       </div>
+      
+      {/* Onboarding Hint for New Project button */}
+      {selectedProject && (
+        <OnboardingHint
+          direction="right"
+          message="Try it with your own idea!"
+          targetPosition={{ 
+            top: '35px', 
+            right: '200px' 
+          }}
+        />
+      )}
     </MockDashboardLayout>
   )
 }

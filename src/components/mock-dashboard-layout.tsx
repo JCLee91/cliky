@@ -9,6 +9,7 @@ import { Logo } from '@/components/ui/logo'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { PanelLeftClose, PanelLeftOpen, Check, Plus } from 'lucide-react'
 import { mockProjects, mockUser } from '@/lib/mock-data'
+import { OnboardingHint } from '@/components/onboarding-hint'
 
 interface MockDashboardLayoutProps {
   children: React.ReactNode
@@ -38,7 +39,10 @@ export function MockDashboardLayout({ children, selectedProject, onProjectSelect
         <div className="relative flex h-16 items-center justify-center px-4">
           {!isCollapsed ? (
             <>
-              <div onClick={handleInteraction} className="flex items-center cursor-pointer">
+              <div onClick={() => {
+                onProjectSelect(null)
+                router.push('/')
+              }} className="flex items-center cursor-pointer">
                 <Logo variant="full" width={120} height={32} className="-ml-4 -mt-1" />
               </div>
               <Button
@@ -141,6 +145,18 @@ export function MockDashboardLayout({ children, selectedProject, onProjectSelect
           {children}
         </div>
       </main>
+      
+      {/* Onboarding Hint */}
+      {!selectedProject && (
+        <OnboardingHint
+          direction="left"
+          message="Click here to try!"
+          targetPosition={{ 
+            top: '160px', 
+            left: isCollapsed ? '90px' : '210px' 
+          }}
+        />
+      )}
     </div>
   )
 }

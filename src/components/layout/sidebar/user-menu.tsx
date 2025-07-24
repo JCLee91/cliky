@@ -26,7 +26,28 @@ export function UserMenu({ collapsed = false }: UserMenuProps) {
   useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
+      if (user) {
+        // Fetch profile from profiles table
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single()
+
+        if (profile) {
+          // Merge profile data with user data
+          setUser({
+            ...user,
+            user_metadata: {
+              ...user.user_metadata,
+              full_name: profile.full_name || user.user_metadata?.full_name,
+              avatar_url: profile.avatar_url || user.user_metadata?.avatar_url
+            }
+          })
+        } else {
+          setUser(user)
+        }
+      }
     }
     getUser()
 
@@ -34,7 +55,25 @@ export function UserMenu({ collapsed = false }: UserMenuProps) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (session?.user) {
-          setUser(session.user)
+          // Fetch profile from profiles table on auth change
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single()
+
+          if (profile) {
+            setUser({
+              ...session.user,
+              user_metadata: {
+                ...session.user.user_metadata,
+                full_name: profile.full_name || session.user.user_metadata?.full_name,
+                avatar_url: profile.avatar_url || session.user.user_metadata?.avatar_url
+              }
+            })
+          } else {
+            setUser(session.user)
+          }
         }
       }
     )
@@ -43,7 +82,24 @@ export function UserMenu({ collapsed = false }: UserMenuProps) {
     const handleProfileUpdate = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        setUser(user)
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single()
+
+        if (profile) {
+          setUser({
+            ...user,
+            user_metadata: {
+              ...user.user_metadata,
+              full_name: profile.full_name || user.user_metadata?.full_name,
+              avatar_url: profile.avatar_url || user.user_metadata?.avatar_url
+            }
+          })
+        } else {
+          setUser(user)
+        }
       }
     }
 

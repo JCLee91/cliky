@@ -31,8 +31,26 @@ export default function ProfilePage() {
       if (!user) return
 
       setUser(user)
-      setFullName(user.user_metadata?.full_name || '')
-      setAvatarUrl(user.user_metadata?.avatar_url || '')
+      
+      // Fetch profile from profiles table
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+
+      if (profileError && profileError.code !== 'PGRST116') {
+        console.error('Error loading profile:', profileError)
+      }
+
+      if (profile) {
+        setFullName(profile.full_name || '')
+        setAvatarUrl(profile.avatar_url || '')
+      } else {
+        // Fallback to user metadata if profile doesn't exist
+        setFullName(user.user_metadata?.full_name || '')
+        setAvatarUrl(user.user_metadata?.avatar_url || '')
+      }
     } catch (error) {
       console.error('Error loading user:', error)
       toast.error('Failed to load profile')
@@ -45,14 +63,30 @@ export default function ProfilePage() {
     try {
       setUpdating(true)
 
-      const { error } = await supabase.auth.updateUser({
+      if (!user) throw new Error('No user found')
+
+      // Update profile in profiles table
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          full_name: fullName,
+          avatar_url: avatarUrl,
+          email: user.email,
+          updated_at: new Date().toISOString()
+        })
+
+      if (profileError) throw profileError
+
+      // Also update auth metadata for consistency
+      const { error: authError } = await supabase.auth.updateUser({
         data: { 
           full_name: fullName,
           avatar_url: avatarUrl
         }
       })
 
-      if (error) throw error
+      if (authError) throw authError
 
       // Refresh the user data to trigger auth state change
       const { data: { user: updatedUser } } = await supabase.auth.getUser()
@@ -120,6 +154,19 @@ export default function ProfilePage() {
 
       setAvatarUrl(data.publicUrl)
       
+      // Update profile in profiles table
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          avatar_url: data.publicUrl,
+          email: user.email,
+          updated_at: new Date().toISOString()
+        })
+
+      if (profileError) throw profileError
+
+      // Also update auth metadata
       const { error: updateError } = await supabase.auth.updateUser({
         data: { avatar_url: data.publicUrl }
       })

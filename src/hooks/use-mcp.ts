@@ -5,7 +5,7 @@ import { getMCPClient, breakdownToTasks } from '@/lib/mcp/taskmaster'
 import { TaskBreakdownRequest, TaskBreakdownResponse, Task, CreateTaskData } from '@/types/task'
 import { Project } from '@/types/project'
 import { supabase } from '@/lib/supabase/client'
-// import { toast } from 'sonner' - Removed for performance
+import { CacheManager, CACHE_KEYS } from '@/lib/cache'
 
 interface UseMCPOptions {
   onTasksCreated?: (tasks: Task[]) => void
@@ -110,16 +110,28 @@ export function useMCP(options?: UseMCPOptions) {
     return data || []
   }
 
-  const fetchTasks = useCallback(async (projectId: string): Promise<Task[]> => {
+  const fetchTasks = useCallback(async (projectId: string, forceRefresh = false): Promise<Task[]> => {
     try {
-      // Validate projectId before making the request
+      // Validate projectId
       if (!projectId || typeof projectId !== 'string') {
-        console.warn('fetchTasks called with invalid projectId:', projectId)
         setTasks([])
         return []
       }
 
-      console.log('[fetchTasks] Fetching tasks for project:', projectId)
+      // Try cache first
+      if (!forceRefresh) {
+        const cached = CacheManager.get<Task[]>(CACHE_KEYS.TASKS(projectId), 5)
+        if (cached) {
+          setTasks(cached)
+          
+          // Background refresh
+          setTimeout(() => {
+            fetchTasks(projectId, true)
+          }, 1000)
+          return cached
+        }
+      }
+
 
       const { data, error } = await supabase
         .from('tasks')
@@ -127,23 +139,25 @@ export function useMCP(options?: UseMCPOptions) {
         .eq('project_id', projectId)
         .order('order_index', { ascending: true })
 
-      if (error) {
-        console.error('[fetchTasks] Supabase error:', error)
-        throw error
-      }
+      if (error) throw error
 
       const fetchedTasks = data || []
-      console.log('[fetchTasks] Fetched tasks:', fetchedTasks.length, 'tasks')
-      console.log('[fetchTasks] Task details:', fetchedTasks)
       
+      // Update state and cache
       setTasks(fetchedTasks)
+      CacheManager.set(CACHE_KEYS.TASKS(projectId), fetchedTasks)
+      
       return fetchedTasks
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Failed to fetch tasks.')
       console.error('[fetchTasks] Error:', error)
       setError(error)
-      // Silent error
-      return []
+      
+      // Try cache on error
+      const cached = CacheManager.get<Task[]>(CACHE_KEYS.TASKS(projectId), 60)
+      const tasks = cached || []
+      setTasks(tasks)
+      return tasks
     }
   }, [])
 
@@ -157,10 +171,18 @@ export function useMCP(options?: UseMCPOptions) {
       return false
     }
 
+    // Find the current task to get project_id
+    const currentTask = tasks.find(t => t.id === taskId)
+    if (!currentTask) return false
+
     // Update local state immediately (optimistic update)
-    setTasks(prev => prev.map(task => 
+    const updatedTasks = tasks.map(task => 
       task.id === taskId ? { ...task, ...updates } : task
-    ))
+    )
+    setTasks(updatedTasks)
+    
+    // Update cache optimistically
+    CacheManager.set(CACHE_KEYS.TASKS(currentTask.project_id), updatedTasks)
 
     try {
       // Update database in the background
@@ -171,10 +193,7 @@ export function useMCP(options?: UseMCPOptions) {
 
       if (error) {
         // Revert on error
-        const currentTask = tasks.find(t => t.id === taskId)
-        if (currentTask?.project_id) {
-          await fetchTasks(currentTask.project_id)
-        }
+        await fetchTasks(currentTask.project_id, true)
         throw error
       }
 

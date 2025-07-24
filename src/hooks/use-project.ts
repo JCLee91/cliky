@@ -27,10 +27,10 @@ const initialFormData: ProjectFormData = {
 }
 
 export function useProject(): UseProjectReturn {
-  const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(false)
   const [formData, setFormDataState] = useState<ProjectFormData>(initialFormData)
   const { toast } = useToast()
+  const projectStore = useProjectStore()
 
   const setFormData = useCallback((data: Partial<ProjectFormData>) => {
     setFormDataState(prev => ({ ...prev, ...data }))
@@ -41,28 +41,10 @@ export function useProject(): UseProjectReturn {
   }, [])
 
   const fetchProjects = useCallback(async () => {
-    setLoading(true)
-    try {
-      const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .is('deleted_at', null)
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      setProjects(data || [])
-      return data || []
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to load projects.',
-        variant: 'destructive'
-      })
-      return []
-    } finally {
-      setLoading(false)
-    }
-  }, [toast])
+    // Use store's fetchProjects which handles caching
+    await projectStore.fetchProjects(true)
+    return projectStore.projects
+  }, [projectStore])
 
   const createProject = useCallback(async (data: ProjectFormData): Promise<Project | null> => {
     setLoading(true)
@@ -89,11 +71,9 @@ export function useProject(): UseProjectReturn {
 
       if (error) throw error
 
-      await fetchProjects()
-      toast({
-        title: 'Success',
-        description: 'Project created successfully.'
-      })
+      // Refresh projects
+      await projectStore.fetchProjects(true)
+      // Success toast removed
 
       return project
     } catch (error) {
@@ -119,16 +99,9 @@ export function useProject(): UseProjectReturn {
 
       if (error) throw error
 
-      // Fetch updated projects
-      await fetchProjects()
+      // Update the store optimistically
+      projectStore.updateProjectInStore(id, data)
       
-      // Update the store
-      useProjectStore.getState().updateProjectInStore(id, data)
-
-      toast({
-        title: 'Success',
-        description: 'Project updated successfully.'
-      })
     } catch (error) {
       toast({
         title: 'Error',
@@ -151,15 +124,14 @@ export function useProject(): UseProjectReturn {
 
       if (error) throw error
 
-      await fetchProjects()
+      // Remove from cache and refresh
+      await projectStore.fetchProjects(true)
       
       // Clear selected project if it was deleted
-      const { selectedProject, setSelectedProject } = useProjectStore.getState()
-      if (selectedProject?.id === id) {
-        setSelectedProject(null)
+      if (projectStore.selectedProject?.id === id) {
+        projectStore.setSelectedProject(null)
       }
 
-      // Success toast removed
     } catch (error) {
       toast({
         title: 'Error',
@@ -172,8 +144,8 @@ export function useProject(): UseProjectReturn {
   }, [fetchProjects, toast])
 
   return {
-    projects,
-    loading,
+    projects: projectStore.projects,
+    loading: loading || projectStore.isLoading,
     formData,
     setFormData,
     resetFormData,

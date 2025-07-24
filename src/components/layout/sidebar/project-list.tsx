@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { useProjectStore } from '@/store/project-store'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -19,22 +18,12 @@ export function ProjectList({ className, onNewProject }: ProjectListProps) {
     selectedProject, 
     setSelectedProject, 
     setIsFormOpen,
-    fetchProjects,
-    subscribeToProjects 
+    isLoading,
+    hasInitialized
   } = useProjectStore()
-  const [isInitialLoading, setIsInitialLoading] = useState(true)
-
-  useEffect(() => {
-    // Initial fetch
-    const loadProjects = async () => {
-      await fetchProjects()
-      setIsInitialLoading(false)
-    }
-    loadProjects()
-  }, [fetchProjects])
 
   // Show skeleton during initial load
-  if (isInitialLoading) {
+  if (!hasInitialized && projects.length === 0) {
     return (
       <div className={cn('space-y-2', className)}>
         <Button
@@ -84,11 +73,7 @@ export function ProjectList({ className, onNewProject }: ProjectListProps) {
               key={project.id}
               variant={selectedProject?.id === project.id ? 'secondary' : 'ghost'}
               className="w-full justify-start gap-2 h-auto p-3"
-              onClick={() => {
-                console.log('[ProjectList] Selecting project:', project.name, project.id)
-                console.log('[ProjectList] Project details:', project)
-                setSelectedProject(project)
-              }}
+              onClick={() => setSelectedProject(project)}
             >
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <FileText className="h-4 w-4 shrink-0" />

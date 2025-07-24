@@ -20,7 +20,7 @@ import { ANIMATION_PRESETS } from '@/lib/animation-presets'
 
 export default function DashboardPage() {
   const { createProject, updateProject, deleteProject } = useProject()
-  const { selectedProject, setSelectedProject, isFormOpen, setIsFormOpen, fetchProjects } = useProjectStore()
+  const { selectedProject, setSelectedProject, isFormOpen, setIsFormOpen, fetchProjects, initializeProjects } = useProjectStore()
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   
   const { 
@@ -123,23 +123,17 @@ export default function DashboardPage() {
     }
   }
 
-  // Fetch projects on mount
+  // Initialize projects on mount
   useEffect(() => {
-    fetchProjects()
-  }, [fetchProjects])
+    initializeProjects()
+  }, [initializeProjects])
 
   // Fetch tasks when project is selected
   useEffect(() => {
     if (selectedProject?.id) {
-      console.log('[Dashboard] Selected project:', selectedProject.name, selectedProject.id)
-      console.log('[Dashboard] Fetching tasks for project...')
-      fetchTasks(selectedProject.id).then(fetchedTasks => {
-        console.log('[Dashboard] Tasks loaded:', fetchedTasks.length)
-      })
-    } else {
-      console.log('[Dashboard] No project selected')
+      fetchTasks(selectedProject.id)
     }
-  }, [selectedProject?.id, fetchTasks]) // fetchTasks is stable due to useCallback
+  }, [selectedProject?.id, fetchTasks])
 
   const displayContent = selectedProject ? (selectedProject.trd_content || prdContent || '') : ''
 

@@ -14,6 +14,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { LogOut, User, Settings } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
+import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/utils'
 
 interface UserMenuProps {
   collapsed?: boolean
@@ -22,12 +24,15 @@ interface UserMenuProps {
 export function UserMenu({ collapsed = false }: UserMenuProps) {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const getUser = async () => {
       console.log('[UserMenu] Fetching user...')
+      setIsLoading(true)
       
-      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      try {
+        const { data: { user }, error: userError } = await supabase.auth.getUser()
       console.log('[UserMenu] User fetch result:', { 
         hasUser: !!user, 
         userId: user?.id,
@@ -70,8 +75,17 @@ export function UserMenu({ collapsed = false }: UserMenuProps) {
       } else {
         console.log('[UserMenu] No user found')
       }
+      } catch (error) {
+        console.error('[UserMenu] Error fetching user:', error)
+      } finally {
+        setIsLoading(false)
+      }
     }
-    getUser()
+    
+    // Delay initial load to ensure auth is ready
+    const timer = setTimeout(() => {
+      getUser()
+    }, 500) // Increased delay for auth initialization
 
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -132,6 +146,7 @@ export function UserMenu({ collapsed = false }: UserMenuProps) {
     return () => {
       subscription.unsubscribe()
       window.removeEventListener('userProfileUpdated', handleProfileUpdate)
+      clearTimeout(timer)
     }
   }, [])
 
@@ -144,6 +159,24 @@ export function UserMenu({ collapsed = false }: UserMenuProps) {
     return email.split('@')[0].substring(0, 2).toUpperCase()
   }
 
+  // Show loading skeleton while fetching user data
+  if (isLoading && !user) {
+    return (
+      <div className={cn(
+        "flex items-center gap-2 p-2",
+        collapsed && "justify-center"
+      )}>
+        <Skeleton className="h-8 w-8 rounded-full" />
+        {!collapsed && (
+          <div className="flex flex-col gap-1 flex-1">
+            <Skeleton className="h-4 w-20" />
+            <Skeleton className="h-3 w-28" />
+          </div>
+        )}
+      </div>
+    )
+  }
+  
   if (!user) return null
 
   if (collapsed) {

@@ -85,6 +85,8 @@ export function ProjectList({ className, onNewProject }: ProjectListProps) {
               variant={selectedProject?.id === project.id ? 'secondary' : 'ghost'}
               className="w-full justify-start gap-2 h-auto p-3"
               onClick={() => {
+                console.log('[ProjectList] Selecting project:', project.name, project.id)
+                console.log('[ProjectList] Project details:', project)
                 setSelectedProject(project)
               }}
             >

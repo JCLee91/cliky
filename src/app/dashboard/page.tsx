@@ -131,7 +131,13 @@ export default function DashboardPage() {
   // Fetch tasks when project is selected
   useEffect(() => {
     if (selectedProject?.id) {
-      fetchTasks(selectedProject.id)
+      console.log('[Dashboard] Selected project:', selectedProject.name, selectedProject.id)
+      console.log('[Dashboard] Fetching tasks for project...')
+      fetchTasks(selectedProject.id).then(fetchedTasks => {
+        console.log('[Dashboard] Tasks loaded:', fetchedTasks.length)
+      })
+    } else {
+      console.log('[Dashboard] No project selected')
     }
   }, [selectedProject?.id, fetchTasks]) // fetchTasks is stable due to useCallback
 

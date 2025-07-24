@@ -119,19 +119,28 @@ export function useMCP(options?: UseMCPOptions) {
         return []
       }
 
+      console.log('[fetchTasks] Fetching tasks for project:', projectId)
+
       const { data, error } = await supabase
         .from('tasks')
         .select('*')
         .eq('project_id', projectId)
         .order('order_index', { ascending: true })
 
-      if (error) throw error
+      if (error) {
+        console.error('[fetchTasks] Supabase error:', error)
+        throw error
+      }
 
       const fetchedTasks = data || []
+      console.log('[fetchTasks] Fetched tasks:', fetchedTasks.length, 'tasks')
+      console.log('[fetchTasks] Task details:', fetchedTasks)
+      
       setTasks(fetchedTasks)
       return fetchedTasks
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Failed to fetch tasks.')
+      console.error('[fetchTasks] Error:', error)
       setError(error)
       // Silent error
       return []

@@ -20,3 +20,23 @@ export interface ProjectFormData {
   userFlow: string
   techPreferences?: string[]
 }
+
+export interface GuidedProjectFormData {
+  name: string
+  idea: string
+  productDescriptionChoice: 'A' | 'B'
+  productDescriptionOptionA?: string
+  productDescriptionOptionB?: string
+  productDescriptionNotes?: string
+  userFlowChoice: 'A' | 'B'
+  userFlowOptionA?: string
+  userFlowOptionB?: string
+  userFlowNotes?: string
+  coreFeatures?: string[]
+  roles?: string[]
+  suggestedFeatures?: string[]
+  suggestedRoles?: string[]
+  featuresNotes?: string
+  techStack?: string[]
+  techStackNotes?: string
+}

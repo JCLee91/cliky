@@ -16,6 +16,12 @@ interface ProjectStore {
   isFormOpen: boolean
   setIsFormOpen: (isOpen: boolean) => void
   
+  // Creation method selection
+  isMethodModalOpen: boolean
+  setIsMethodModalOpen: (isOpen: boolean) => void
+  creationMethod: 'classic' | 'guided' | null
+  setCreationMethod: (method: 'classic' | 'guided' | null) => void
+  
   // Loading state
   isLoading: boolean
   hasInitialized: boolean
@@ -31,6 +37,8 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
   projects: [],
   selectedProject: null,
   isFormOpen: false,
+  isMethodModalOpen: false,
+  creationMethod: null,
   isLoading: false,
   hasInitialized: false,
   
@@ -42,6 +50,8 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
   },
   setSelectedProject: (project) => set({ selectedProject: project }),
   setIsFormOpen: (isOpen) => set({ isFormOpen: isOpen }),
+  setIsMethodModalOpen: (isOpen) => set({ isMethodModalOpen: isOpen }),
+  setCreationMethod: (method) => set({ creationMethod: method }),
   
   // Update project in both list and selected (if matched) - with optimistic update
   updateProjectInStore: (id, updates) => {

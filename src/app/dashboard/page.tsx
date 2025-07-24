@@ -6,9 +6,11 @@ import { Button } from '@/components/ui/button'
 import { Plus, Sparkles, Trash2 } from 'lucide-react'
 import { EmptyMessage } from '@/components/ui/empty-message'
 import { ProjectForm } from '@/components/project-form'
+import { GuidedProjectForm } from '@/components/guided-project-form'
 import { PRDViewer } from '@/components/prd-viewer'
 import { TaskCards } from '@/components/task-cards'
 import { DeleteProjectDialog } from '@/components/delete-project-dialog'
+import { ProjectMethodModal } from '@/components/project-method-modal'
 import { useProject } from '@/hooks/use-project'
 import { useAIStream } from '@/hooks/use-ai-stream'
 import { useMCP } from '@/hooks/use-mcp'
@@ -20,7 +22,7 @@ import { ANIMATION_PRESETS } from '@/lib/animation-presets'
 
 export default function DashboardPage() {
   const { createProject, updateProject, deleteProject } = useProject()
-  const { selectedProject, setSelectedProject, isFormOpen, setIsFormOpen, fetchProjects, initializeProjects } = useProjectStore()
+  const { selectedProject, setSelectedProject, isFormOpen, setIsFormOpen, fetchProjects, initializeProjects, setIsMethodModalOpen, creationMethod, setCreationMethod } = useProjectStore()
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   
   const { 
@@ -57,8 +59,78 @@ export default function DashboardPage() {
 
   const handleFormSuccess = async (formData: any) => {
     setIsFormOpen(false)
+    setCreationMethod(null)
     
     try {
+      // 1. Create project
+      const project = await createProject(formData)
+      if (!project) {
+        throw new Error('Failed to create project')
+      }
+      
+      // 2. Set as selected project
+      setSelectedProject(project)
+      
+      // 2.5. Refresh project list in store
+      await fetchProjects()
+      
+      // 3. Generate PRD with proper callback handling
+      await new Promise<void>((resolve, reject) => {
+        generatePRDBase(formData, {
+          onSuccess: async (content: string) => {
+            try {
+              // 4. Update project with PRD content
+              await updateProject(project.id, {
+                trd_content: content,
+                status: 'trd_generated'
+              })
+              // 5. Refresh project list to show updated status
+              await fetchProjects()
+              resolve()
+            } catch (error) {
+              reject(error)
+            }
+          },
+          onError: (error: Error) => {
+            reject(error)
+          }
+        })
+      })
+    } catch (error) {
+      toast.error('Failed to complete project setup')
+    }
+  }
+
+  const handleGuidedFormSuccess = async (guidedData: any) => {
+    setIsFormOpen(false)
+    setCreationMethod(null)
+    
+    try {
+      // Convert guided form data to standard project form data
+      const productDescription = guidedData.productDescriptionChoice === 'A' 
+        ? guidedData.productDescriptionOptionA 
+        : guidedData.productDescriptionOptionB
+      
+      const userFlow = guidedData.userFlowChoice === 'A'
+        ? guidedData.userFlowOptionA
+        : guidedData.userFlowOptionB
+
+      const formData = {
+        name: guidedData.name,
+        idea: `${guidedData.idea}\n\nProduct Description: ${productDescription}\n${guidedData.productDescriptionNotes ? `Additional Notes: ${guidedData.productDescriptionNotes}` : ''}`,
+        features: guidedData.coreFeatures || [],
+        userFlow: `${userFlow}\n${guidedData.userFlowNotes ? `Additional Notes: ${guidedData.userFlowNotes}` : ''}`,
+        techPreferences: guidedData.techStack || []
+      }
+      
+      // Add any additional notes to the idea
+      if (guidedData.featuresNotes) {
+        formData.idea += `\n\nFeature Notes: ${guidedData.featuresNotes}`
+      }
+      if (guidedData.techStackNotes) {
+        formData.idea += `\n\nTech Stack Notes: ${guidedData.techStackNotes}`
+      }
+      
       // 1. Create project
       const project = await createProject(formData)
       if (!project) {
@@ -101,7 +173,7 @@ export default function DashboardPage() {
   const handleNewProject = () => {
     setSelectedProject(null)
     reset()
-    setIsFormOpen(true)
+    setIsMethodModalOpen(true)
   }
 
   const handleBreakdownToTasks = async () => {
@@ -219,7 +291,7 @@ export default function DashboardPage() {
                     description="Enter your idea and AI will generate a PRD and task list"
                     action={{
                       label: "Create New Project",
-                      onClick: () => setIsFormOpen(true)
+                      onClick: () => setIsMethodModalOpen(true)
                     }}
                   />
                 </CardContent>
@@ -229,12 +301,29 @@ export default function DashboardPage() {
         )}
       </AnimatePresence>
 
-      {/* Project Form Modal */}
-      <ProjectForm
-        open={isFormOpen}
-        onOpenChange={setIsFormOpen}
-        onSubmit={handleFormSuccess}
-      />
+      {/* Project Method Selection Modal */}
+      <ProjectMethodModal />
+      
+      {/* Project Form Modal - Classic or Guided based on creationMethod */}
+      {creationMethod === 'classic' ? (
+        <ProjectForm
+          open={isFormOpen}
+          onOpenChange={(open) => {
+            setIsFormOpen(open)
+            if (!open) setCreationMethod(null)
+          }}
+          onSubmit={handleFormSuccess}
+        />
+      ) : (
+        <GuidedProjectForm
+          open={isFormOpen}
+          onOpenChange={(open) => {
+            setIsFormOpen(open)
+            if (!open) setCreationMethod(null)
+          }}
+          onSubmit={handleGuidedFormSuccess}
+        />
+      )}
       
       {/* Delete Confirmation Dialog */}
       {selectedProject && (

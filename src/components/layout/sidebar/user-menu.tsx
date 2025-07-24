@@ -14,8 +14,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { LogOut, User, Settings } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
-import { Skeleton } from '@/components/ui/skeleton'
-import { cn } from '@/lib/utils'
 
 interface UserMenuProps {
   collapsed?: boolean
@@ -24,130 +22,61 @@ interface UserMenuProps {
 export function UserMenu({ collapsed = false }: UserMenuProps) {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const getUser = async () => {
-      console.log('[UserMenu] Fetching user...')
-      setIsLoading(true)
-      
-      try {
-        const { data: { user }, error: userError } = await supabase.auth.getUser()
-      console.log('[UserMenu] User fetch result:', { 
-        hasUser: !!user, 
-        userId: user?.id,
-        email: user?.email,
-        error: userError 
-      })
-      
+    // Simple direct fetch
+    supabase.auth.getUser().then(({ data: { user } }) => {
       if (user) {
-        // Fetch profile from profiles table
-        console.log('[UserMenu] Fetching profile for user:', user.id)
-        
-        const { data: profile, error: profileError } = await supabase
+        // Try to get profile, but don't wait for it
+        supabase
           .from('profiles')
           .select('*')
           .eq('id', user.id)
           .single()
-          
-        console.log('[UserMenu] Profile fetch result:', { 
-          hasProfile: !!profile, 
-          profileData: profile,
-          error: profileError 
-        })
-
-        if (profile) {
-          // Merge profile data with user data
-          const mergedUser = {
-            ...user,
-            user_metadata: {
-              ...user.user_metadata,
-              full_name: profile.full_name || user.user_metadata?.full_name,
-              avatar_url: profile.avatar_url || user.user_metadata?.avatar_url
-            }
-          }
-          console.log('[UserMenu] Setting merged user data')
-          setUser(mergedUser)
-        } else {
-          console.log('[UserMenu] No profile found, using auth user data')
-          setUser(user)
-        }
-      } else {
-        console.log('[UserMenu] No user found')
-      }
-      } catch (error) {
-        console.error('[UserMenu] Error fetching user:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    
-    // Delay initial load to ensure auth is ready
-    const timer = setTimeout(() => {
-      getUser()
-    }, 500) // Increased delay for auth initialization
-
-    // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('[UserMenu] Auth state changed:', event, !!session)
-        
-        if (session?.user) {
-          // Fetch profile from profiles table on auth change
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single()
-
-          if (profile) {
-            setUser({
-              ...session.user,
-              user_metadata: {
-                ...session.user.user_metadata,
-                full_name: profile.full_name || session.user.user_metadata?.full_name,
-                avatar_url: profile.avatar_url || session.user.user_metadata?.avatar_url
-              }
-            })
-          } else {
-            setUser(session.user)
-          }
-        }
-      }
-    )
-
-    // Listen for profile updates
-    const handleProfileUpdate = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single()
-
-        if (profile) {
-          setUser({
-            ...user,
-            user_metadata: {
-              ...user.user_metadata,
-              full_name: profile.full_name || user.user_metadata?.full_name,
-              avatar_url: profile.avatar_url || user.user_metadata?.avatar_url
+          .then(({ data: profile }) => {
+            if (profile) {
+              setUser({
+                ...user,
+                user_metadata: {
+                  ...user.user_metadata,
+                  full_name: profile.full_name || user.user_metadata?.full_name,
+                  avatar_url: profile.avatar_url || user.user_metadata?.avatar_url
+                }
+              })
+            } else {
+              setUser(user)
             }
           })
-        } else {
-          setUser(user)
-        }
       }
+    })
+
+    // Listen for profile updates only
+    const handleProfileUpdate = () => {
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (user) {
+          supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single()
+            .then(({ data: profile }) => {
+              if (profile) {
+                setUser({
+                  ...user,
+                  user_metadata: {
+                    ...user.user_metadata,
+                    full_name: profile.full_name || user.user_metadata?.full_name,
+                    avatar_url: profile.avatar_url || user.user_metadata?.avatar_url
+                  }
+                })
+              }
+            })
+        }
+      })
     }
 
     window.addEventListener('userProfileUpdated', handleProfileUpdate)
-
-    return () => {
-      subscription.unsubscribe()
-      window.removeEventListener('userProfileUpdated', handleProfileUpdate)
-      clearTimeout(timer)
-    }
+    return () => window.removeEventListener('userProfileUpdated', handleProfileUpdate)
   }, [])
 
   const handleSignOut = async () => {
@@ -159,24 +88,7 @@ export function UserMenu({ collapsed = false }: UserMenuProps) {
     return email.split('@')[0].substring(0, 2).toUpperCase()
   }
 
-  // Show loading skeleton while fetching user data
-  if (isLoading && !user) {
-    return (
-      <div className={cn(
-        "flex items-center gap-2 p-2",
-        collapsed && "justify-center"
-      )}>
-        <Skeleton className="h-8 w-8 rounded-full" />
-        {!collapsed && (
-          <div className="flex flex-col gap-1 flex-1">
-            <Skeleton className="h-4 w-20" />
-            <Skeleton className="h-3 w-28" />
-          </div>
-        )}
-      </div>
-    )
-  }
-  
+  // Simply show nothing while loading - cleaner than skeleton
   if (!user) return null
 
   if (collapsed) {

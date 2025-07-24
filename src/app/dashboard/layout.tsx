@@ -17,14 +17,27 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   
   // 레이아웃 레벨에서 인증 체크 - 모든 dashboard/* 페이지에 적용
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    console.log('[DashboardLayout] Checking auth...')
+    
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      console.log('[DashboardLayout] Session check:', { 
+        hasSession: !!session, 
+        userId: session?.user?.id,
+        email: session?.user?.email,
+        error 
+      })
+      
       if (!session) {
+        console.log('[DashboardLayout] No session, redirecting to login')
         router.push('/login')
       }
     })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('[DashboardLayout] Auth state changed:', { event, hasSession: !!session })
+      
       if (event === 'SIGNED_OUT' || !session) {
+        console.log('[DashboardLayout] User signed out or no session, redirecting')
         router.push('/login')
       }
     })

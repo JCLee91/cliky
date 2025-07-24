@@ -25,28 +25,50 @@ export function UserMenu({ collapsed = false }: UserMenuProps) {
 
   useEffect(() => {
     const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
+      console.log('[UserMenu] Fetching user...')
+      
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      console.log('[UserMenu] User fetch result:', { 
+        hasUser: !!user, 
+        userId: user?.id,
+        email: user?.email,
+        error: userError 
+      })
+      
       if (user) {
         // Fetch profile from profiles table
-        const { data: profile } = await supabase
+        console.log('[UserMenu] Fetching profile for user:', user.id)
+        
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', user.id)
           .single()
+          
+        console.log('[UserMenu] Profile fetch result:', { 
+          hasProfile: !!profile, 
+          profileData: profile,
+          error: profileError 
+        })
 
         if (profile) {
           // Merge profile data with user data
-          setUser({
+          const mergedUser = {
             ...user,
             user_metadata: {
               ...user.user_metadata,
               full_name: profile.full_name || user.user_metadata?.full_name,
               avatar_url: profile.avatar_url || user.user_metadata?.avatar_url
             }
-          })
+          }
+          console.log('[UserMenu] Setting merged user data')
+          setUser(mergedUser)
         } else {
+          console.log('[UserMenu] No profile found, using auth user data')
           setUser(user)
         }
+      } else {
+        console.log('[UserMenu] No user found')
       }
     }
     getUser()

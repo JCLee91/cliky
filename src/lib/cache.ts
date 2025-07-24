@@ -15,6 +15,7 @@ export class CacheManager {
         version: this.VERSION
       }
       localStorage.setItem(key, JSON.stringify(item))
+      console.log('[Cache] Saved:', key, { dataType: typeof data, size: JSON.stringify(data).length })
     } catch (error) {
       console.warn('[Cache] Failed to save:', key, error)
     }
@@ -23,23 +24,30 @@ export class CacheManager {
   static get<T>(key: string, ttlMinutes: number = 5): T | null {
     try {
       const cached = localStorage.getItem(key)
-      if (!cached) return null
+      if (!cached) {
+        console.log('[Cache] Miss:', key)
+        return null
+      }
       
       const item: CacheItem<T> = JSON.parse(cached)
       
       // Version check
       if (item.version !== this.VERSION) {
+        console.log('[Cache] Version mismatch:', key, { cached: item.version, current: this.VERSION })
         this.remove(key)
         return null
       }
       
       // TTL check
-      const isExpired = Date.now() - item.timestamp > ttlMinutes * 60 * 1000
+      const age = Date.now() - item.timestamp
+      const isExpired = age > ttlMinutes * 60 * 1000
       if (isExpired) {
+        console.log('[Cache] Expired:', key, { age: Math.floor(age / 1000) + 's', ttl: ttlMinutes * 60 + 's' })
         this.remove(key)
         return null
       }
       
+      console.log('[Cache] Hit:', key, { age: Math.floor(age / 1000) + 's' })
       return item.data
     } catch (error) {
       console.warn('[Cache] Failed to get:', key, error)

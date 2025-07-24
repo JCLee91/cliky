@@ -5,7 +5,6 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { taskMasterCore, TaskMasterCoreService } from '@/lib/taskmaster/core'
 import { z } from 'zod'
 import { openai } from '@ai-sdk/openai'
 import { generateText } from 'ai'
@@ -14,73 +13,6 @@ import { ProjectFormData } from '@/types/project'
 import { PRD_SYSTEM_PROMPT, generatePRDPrompt } from '@/lib/prompts/prd-generation'
 import { generateSearchQueriesWithAI } from '@/lib/prompts/search-queries'
 
-const ParsePRDRequestSchema = z.object({
-  action: z.literal('parse-prd'),
-  prdContent: z.string().min(1),
-  options: z.object({
-    numTasks: z.number().min(1).max(20).optional(),
-    research: z.boolean().optional(),
-    defaultTaskPriority: z.enum(['high', 'medium', 'low']).optional(),
-    projectContext: z.string().optional()
-  }).optional()
-})
-
-const ExpandTaskRequestSchema = z.object({
-  action: z.literal('expand-task'),
-  task: z.object({
-    id: z.number(),
-    title: z.string(),
-    description: z.string(),
-    details: z.string().nullable(),
-    priority: z.enum(['high', 'medium', 'low']),
-    dependencies: z.array(z.number()),
-    status: z.enum(['pending', 'in-progress', 'done', 'completed', 'cancelled']),
-    testStrategy: z.string().nullable()
-  }),
-  options: z.object({
-    numSubtasks: z.number().min(1).max(10).optional(),
-    research: z.boolean().optional(),
-    projectContext: z.string().optional(),
-    complexityReasoningContext: z.string().optional(),
-    expansionPrompt: z.enum(['default', 'complexity-report', 'research']).optional()
-  }).optional()
-})
-
-const NextTaskRequestSchema = z.object({
-  action: z.literal('next-task'),
-  tasks: z.array(z.object({
-    id: z.number(),
-    title: z.string(),
-    description: z.string(),
-    details: z.string().nullable(),
-    priority: z.enum(['high', 'medium', 'low']),
-    dependencies: z.array(z.number()),
-    status: z.enum(['pending', 'in-progress', 'done', 'completed', 'cancelled']),
-    testStrategy: z.string().nullable(),
-    subtasks: z.array(z.object({
-      id: z.string(),
-      title: z.string(),
-      description: z.string(),
-      dependencies: z.array(z.string()),
-      details: z.string(),
-      status: z.enum(['pending', 'in-progress', 'done']),
-      testStrategy: z.string().nullable()
-    })).optional()
-  }))
-})
-
-const UpdateTaskRequestSchema = z.object({
-  action: z.literal('update-task'),
-  tasks: z.array(z.any()),
-  taskId: z.number(),
-  status: z.enum(['pending', 'in-progress', 'done', 'completed', 'cancelled']),
-  subtaskId: z.string().optional()
-})
-
-const ProgressRequestSchema = z.object({
-  action: z.literal('calculate-progress'),
-  tasks: z.array(z.any())
-})
 
 const GeneratePRDRequestSchema = z.object({
   action: z.literal('generate-prd'),
@@ -172,21 +104,6 @@ export async function POST(request: NextRequest) {
     let validatedBody
     try {
       switch (body.action) {
-        case 'parse-prd':
-          validatedBody = ParsePRDRequestSchema.parse(body)
-          break
-        case 'expand-task':
-          validatedBody = ExpandTaskRequestSchema.parse(body)
-          break
-        case 'next-task':
-          validatedBody = NextTaskRequestSchema.parse(body)
-          break
-        case 'update-task':
-          validatedBody = UpdateTaskRequestSchema.parse(body)
-          break
-        case 'calculate-progress':
-          validatedBody = ProgressRequestSchema.parse(body)
-          break
         case 'generate-prd':
           validatedBody = GeneratePRDRequestSchema.parse(body)
           break
@@ -198,7 +115,7 @@ export async function POST(request: NextRequest) {
           break
         default:
           return NextResponse.json(
-            { error: 'Invalid action. Supported: parse-prd, expand-task, next-task, update-task, calculate-progress, generate-tasks-streaming, expand-complex-tasks' }, 
+            { error: 'Invalid action. Supported: generate-prd, generate-tasks-streaming, expand-complex-tasks' }, 
             { status: 400 }
           )
       }
@@ -209,7 +126,7 @@ export async function POST(request: NextRequest) {
           details: error instanceof Error ? error.message : 'Validation failed',
           receivedBody: body,
           receivedAction: body?.action,
-          expectedActions: ['parse-prd', 'expand-task', 'next-task', 'update-task', 'calculate-progress', 'generate-prd', 'generate-tasks-streaming', 'expand-complex-tasks']
+          expectedActions: ['generate-prd', 'generate-tasks-streaming', 'expand-complex-tasks']
         },
         { status: 400 }
       )
@@ -218,75 +135,6 @@ export async function POST(request: NextRequest) {
     const { action } = validatedBody
 
     switch (action) {
-      case 'parse-prd': {
-        const { prdContent, options = {} } = validatedBody
-        
-        const result = await taskMasterCore.parsePRD(prdContent, options)
-
-        return NextResponse.json({
-          success: true,
-          data: result,
-          message: `Successfully generated ${result.tasks.length} tasks from PRD`
-        })
-      }
-
-      case 'expand-task': {
-        const { task, options = {} } = validatedBody
-        
-        const result = await taskMasterCore.expandTask(task, options)
-
-        return NextResponse.json({
-          success: true,
-          data: result,
-          message: `Successfully expanded task ${task.id} into ${result.subtasks.length} subtasks`
-        })
-      }
-
-      case 'next-task': {
-        const { tasks } = validatedBody
-        
-        const nextTask = taskMasterCore.getNextTask(tasks)
-
-        return NextResponse.json({
-          success: true,
-          data: { nextTask },
-          message: nextTask 
-            ? `Next recommended task: ${nextTask.title}`
-            : 'No tasks available to work on'
-        })
-      }
-
-      case 'update-task': {
-        const { tasks, taskId, status, subtaskId } = validatedBody
-        
-        let updatedTasks
-        if (subtaskId) {
-          // 서브태스크 상태 업데이트
-          updatedTasks = taskMasterCore.updateSubtaskStatus(tasks, taskId, subtaskId, status as any)
-        } else {
-          // 메인 태스크 상태 업데이트
-          updatedTasks = taskMasterCore.updateTaskStatus(tasks, taskId, status)
-        }
-
-        return NextResponse.json({
-          success: true,
-          data: { tasks: updatedTasks },
-          message: `Task ${taskId}${subtaskId ? `.${subtaskId}` : ''} status updated to ${status}`
-        })
-      }
-
-      case 'calculate-progress': {
-        const { tasks } = validatedBody
-        
-        const progress = taskMasterCore.calculateProgress(tasks)
-
-        return NextResponse.json({
-          success: true,
-          data: progress,
-          message: `Project is ${progress.percentage}% complete`
-        })
-      }
-
       case 'generate-prd': {
         const { projectData, systemPrompt } = validatedBody as z.infer<typeof GeneratePRDRequestSchema>
         
@@ -523,13 +371,9 @@ export async function GET(request: NextRequest) {
       version: '1.0.0',
       status: 'healthy',
       capabilities: [
-        'parse-prd',
-        'expand-task', 
-        'next-task',
-        'update-task',
-        'calculate-progress',
         'generate-prd',
-        'generate-tasks-streaming'
+        'generate-tasks-streaming',
+        'expand-complex-tasks'
       ],
       timestamp: new Date().toISOString()
     })

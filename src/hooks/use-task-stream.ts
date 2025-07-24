@@ -7,6 +7,7 @@ import { Task } from '@/types/task'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase/client'
 import { calculateTaskComplexity, filterComplexTasks } from '@/utils/task-complexity'
+import { parseTaskLine, parseTaskLines } from '@/utils/task-parser'
 
 interface UseTaskStreamOptions {
   onSuccess?: (tasks: Task[]) => void
@@ -17,7 +18,6 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
   const { onSuccess, onError } = options || {}
   const [parsedTasks, setParsedTasks] = useState<Task[]>([])
   const [isParsingComplete, setIsParsingComplete] = useState(false)
-  const [expandingTaskIds, setExpandingTaskIds] = useState<Set<string>>(new Set())
   const [isExpandingTasks, setIsExpandingTasks] = useState(false)
   const processedLinesRef = useRef<number>(0)
   
@@ -47,48 +47,11 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
       try {
         // JSON Lines 형식 파싱: 각 줄을 개별 태스크로 처리
         const lines = completion.trim().split('\n')
-        const tasks: Task[] = []
-        
-        for (const line of lines) {
-          const trimmedLine = line.trim()
-          if (trimmedLine) {
-            try {
-              // 마크다운 코드 블록 제거
-              const cleanLine = trimmedLine.replace(/^```(json)?|```$/g, '').trim()
-              if (!cleanLine) continue
-              
-              const task = JSON.parse(cleanLine)
-              // 태스크 검증
-              if (task.id && task.title && task.description) {
-                tasks.push({
-                  id: task.id.toString(), // Ensure string ID
-                  project_id: '', // Will be set when saving
-                  title: task.title,
-                  description: task.description,
-                  priority: task.priority || 'medium',
-                  estimated_time: task.estimatedTime || task.estimated_time || '',
-                  dependencies: task.dependencies || [],
-                  order_index: task.id,
-                  status: task.status || 'todo',
-                  created_at: new Date().toISOString(),
-                  details: task.details,
-                  testStrategy: task.testStrategy,
-                  acceptanceCriteria: task.acceptanceCriteria
-                })
-              }
-            } catch (lineError) {
-              // 마크다운 코드 블록이 아닌 경우 무시
-              // Silently skip invalid lines
-            }
-          }
-        }
+        const tasks = parseTaskLines(lines)
         
         if (tasks.length > 0) {
-          // 복잡도 계산 추가
-          const tasksWithComplexity = tasks.map(task => ({
-            ...task,
-            complexity: calculateTaskComplexity(task)
-          }))
+          // parseTaskLines already includes complexity calculation
+          const tasksWithComplexity = tasks
           
           // 먼저 태스크를 설정하고 완료 상태로 표시
           setParsedTasks(tasksWithComplexity)
@@ -103,10 +66,17 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
           // 복잡한 태스크 확장은 비동기로 별도 처리 (UI 블로킹 방지)
           const complexTasks = filterComplexTasks(tasksWithComplexity)
           if (complexTasks.length > 0) {
-            // setTimeout을 사용하여 다음 이벤트 루프에서 실행
-            setTimeout(() => {
-              expandComplexTasks(complexTasks)
-            }, 100)
+            // requestIdleCallback을 사용하여 브라우저가 유휴 상태일 때 실행
+            if ('requestIdleCallback' in window) {
+              requestIdleCallback(() => {
+                expandComplexTasks(complexTasks)
+              }, { timeout: 100 })
+            } else {
+              // 폴백: requestIdleCallback이 없는 경우 setTimeout 사용
+              setTimeout(() => {
+                expandComplexTasks(complexTasks)
+              }, 100)
+            }
           }
         } else {
           throw new Error('No valid tasks were parsed')
@@ -141,42 +111,15 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
       
       // 이미 처리한 라인 수 이후의 라인들만 처리
       for (let i = processedLinesRef.current; i < lines.length; i++) {
-        const line = lines[i].trim()
-        if (line) {
-          try {
-            // 마크다운 코드 블록 제거
-            const cleanLine = line.replace(/^```(json)?|```$/g, '').trim()
-            if (!cleanLine) continue
-            
-            const task = JSON.parse(cleanLine)
-            // 태스크 검증
-            if (task.id && task.title && task.description) {
-              newTasks.push({
-                id: task.id.toString(), // Ensure string ID
-                project_id: '', // Will be set when saving
-                title: task.title,
-                description: task.description,
-                priority: task.priority || 'medium',
-                estimated_time: task.estimatedTime || task.estimated_time || '',
-                dependencies: task.dependencies || [],
-                order_index: task.id,
-                status: task.status || 'todo',
-                created_at: new Date().toISOString(),
-                details: task.details,
-                testStrategy: task.testStrategy,
-                acceptanceCriteria: task.acceptanceCriteria,
-                complexity: calculateTaskComplexity({
-                  title: task.title,
-                  description: task.description,
-                  details: task.details
-                })
-              })
-              processedLinesRef.current = i + 1
-            }
-          } catch {
-            // 아직 완성되지 않은 JSON 라인은 무시
-          }
+        const task = parseTaskLine(lines[i])
+        if (task) {
+          newTasks.push(task)
         }
+      }
+      
+      // 마지막 처리된 인덱스 업데이트
+      if (lines.length > processedLinesRef.current) {
+        processedLinesRef.current = lines.length
       }
       
       if (newTasks.length > 0) {
@@ -279,9 +222,6 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
     try {
       setIsExpandingTasks(true)
       
-      // 확장 중인 태스크 ID들을 추적
-      const expandingIds = new Set(complexTasks.map(t => t.id))
-      setExpandingTaskIds(expandingIds)
       
       toast.info(`Expanding ${complexTasks.length} complex tasks...`)
       
@@ -330,21 +270,18 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
       toast.error('Failed to expand complex tasks')
     } finally {
       setIsExpandingTasks(false)
-      setExpandingTaskIds(new Set())
     }
   }
 
   const reset = () => {
     setParsedTasks([])
     setIsParsingComplete(false)
-    setExpandingTaskIds(new Set())
     setIsExpandingTasks(false)
     processedLinesRef.current = 0
   }
 
   return {
-    // Raw streaming data
-    streamingContent: completion,
+    // Streaming state
     isGenerating: isLoading,
     error,
     
@@ -354,7 +291,6 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
     
     // Expansion state
     isExpandingTasks,
-    expandingTaskIds,
     
     // Actions
     generateTasksStream,

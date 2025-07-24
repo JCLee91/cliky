@@ -104,7 +104,24 @@ export function ProjectForm({ open, onOpenChange, onSubmit, loading = false }: P
   }
 
   const canProceed = () => {
-    return true // 모든 단계에서 자유롭게 진행 가능
+    const values = watch()
+    
+    switch (currentStep) {
+      case 1:
+        // Step 1: name과 idea가 모두 필요
+        return values.name?.trim().length > 0 && values.idea?.trim().length > 0
+      case 2:
+        // Step 2: 최소 1개 이상의 feature 필요
+        return values.features?.length > 0 && values.features.every(f => f.trim().length > 0)
+      case 3:
+        // Step 3: userFlow 필요
+        return values.userFlow?.trim().length > 0
+      case 4:
+        // Step 4: 선택사항이므로 항상 진행 가능
+        return true
+      default:
+        return false
+    }
   }
 
   return (
@@ -142,15 +159,18 @@ export function ProjectForm({ open, onOpenChange, onSubmit, loading = false }: P
 
           {/* Footer */}
           <div className="flex items-center justify-between p-6 border-t">
-            <Button
-              variant="outline"
-              onClick={handlePrevious}
-              disabled={currentStep === 1}
-              className="gap-2"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              Previous
-            </Button>
+            {currentStep > 1 ? (
+              <Button
+                variant="outline"
+                onClick={handlePrevious}
+                className="gap-2"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Previous
+              </Button>
+            ) : (
+              <div /> {/* Empty div for spacing */}
+            )}
 
             <div className="flex gap-2">
               {currentStep === TOTAL_STEPS ? (

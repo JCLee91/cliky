@@ -177,7 +177,7 @@ export function TaskCards({
         </div>
       </CardHeader>
       
-      <CardContent className="flex-1 overflow-auto">
+      <CardContent className="flex-1 overflow-auto pt-2">
         <div className="grid grid-cols-1 gap-4">
           <AnimatePresence>
             {tasks.map((task, index) => (
@@ -187,7 +187,7 @@ export function TaskCards({
                 {...ANIMATION_PRESETS.listItem}
                 transition={{ 
                   ...ANIMATION_PRESETS.listItem.transition,
-                  delay: isLoading ? staggerDelay(index) : 0
+                  delay: isLoading && !task.isExpanded ? staggerDelay(index) : 0
                 }}
               >
                 <TaskCard

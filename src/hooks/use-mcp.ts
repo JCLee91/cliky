@@ -1,9 +1,8 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { getMCPClient, breakdownToTasks } from '@/lib/mcp/taskmaster'
-import { TaskBreakdownRequest, TaskBreakdownResponse, Task, CreateTaskData } from '@/types/task'
-import { Project } from '@/types/project'
+import { getMCPClient } from '@/lib/mcp/taskmaster'
+import { Task } from '@/types/task'
 import { supabase } from '@/lib/supabase/client'
 import { CacheManager, CACHE_KEYS } from '@/lib/cache'
 
@@ -17,97 +16,7 @@ export function useMCP(options?: UseMCPOptions) {
   const [tasks, setTasks] = useState<Task[]>([])
   const [error, setError] = useState<Error | null>(null)
 
-  const generateTasks = useCallback(async (
-    project: Project,
-    trdContent: string
-  ): Promise<TaskBreakdownResponse | null> => {
-    setIsGeneratingTasks(true)
-    setError(null)
 
-    try {
-      const request: TaskBreakdownRequest = {
-        trdContent,
-        projectContext: {
-          name: project.name,
-          idea: project.idea,
-          features: project.features || [],
-          techPreferences: project.tech_preferences || []
-        }
-      }
-
-      // Silent - removed toast for performance
-
-      // Call Task Master MCP to generate tasks
-      const response = await breakdownToTasks(request)
-
-      if (response.tasks.length === 0) {
-        throw new Error('Failed to generate tasks.')
-      }
-
-      // Save tasks to Supabase
-      const savedTasks = await saveTasks(project.id, response)
-      setTasks(savedTasks)
-
-      // Silent success - removed toast
-      options?.onTasksCreated?.(savedTasks)
-
-      return response
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('An error occurred while generating tasks.')
-      setError(error)
-      // Silent error
-      options?.onError?.(error)
-      return null
-    } finally {
-      setIsGeneratingTasks(false)
-    }
-  }, [options])
-
-  const saveTasks = async (
-    projectId: string,
-    response: TaskBreakdownResponse
-  ): Promise<Task[]> => {
-    if (!projectId || typeof projectId !== 'string') {
-      throw new Error('Invalid project ID.')
-    }
-
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-    
-    if (!uuidRegex.test(projectId)) {
-      throw new Error('Project ID is not in valid UUID format.')
-    }
-
-    // Filter out invalid dependencies (non-UUID values)
-    const filterValidDependencies = (deps: string[]): string[] => {
-      if (!Array.isArray(deps)) return []
-      return deps.filter(dep => 
-        typeof dep === 'string' && 
-        dep.length > 0 && 
-        uuidRegex.test(dep)
-      )
-    }
-
-    const tasksToCreate: CreateTaskData[] = response.tasks.map((task, index) => ({
-      project_id: projectId,
-      title: task.title,
-      description: task.description,
-      priority: task.priority,
-      estimated_time: task.estimatedTime,
-      dependencies: filterValidDependencies(task.dependencies || []),
-      order_index: index
-    }))
-
-    const { data, error } = await supabase
-      .from('tasks')
-      .insert(tasksToCreate)
-      .select('*')
-
-    if (error) {
-      throw new Error(`Failed to save tasks: ${error.message}`)
-    }
-
-    return data || []
-  }
 
   const fetchTasks = useCallback(async (projectId: string, forceRefresh = false): Promise<Task[]> => {
     try {
@@ -252,9 +161,6 @@ export function useMCP(options?: UseMCPOptions) {
     }
   }, [fetchTasks])
 
-  const clearError = useCallback(() => {
-    setError(null)
-  }, [])
 
   return {
     // State
@@ -263,12 +169,10 @@ export function useMCP(options?: UseMCPOptions) {
     error,
 
     // Actions
-    generateTasks,
     fetchTasks,
     updateTask,
     deleteTask,
     reorderTasks,
-    clearError,
     setTasks
   }
 }

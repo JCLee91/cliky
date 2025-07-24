@@ -42,16 +42,15 @@ export default function DashboardPage() {
     isGenerating: isGeneratingTasks,
     parsedTasks,
     isExpandingTasks,
-    expandingTaskIds,
     generateTasksStream,
     saveTasks: saveStreamedTasks
   } = useTaskStream({
     onSuccess: async (generatedTasks) => {
       if (selectedProject) {
-        // Save tasks to database
+        // Save tasks to database and use the returned data directly
         const savedTasks = await saveStreamedTasks(selectedProject.id, generatedTasks)
-        // Fetch to update local state
-        await fetchTasks(selectedProject.id)
+        // Update local state with saved tasks instead of fetching again
+        setTasks(savedTasks)
       }
     }
   })

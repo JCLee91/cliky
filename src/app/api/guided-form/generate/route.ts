@@ -53,6 +53,15 @@ const RESPONSE_VALIDATORS = {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if OpenAI API key is configured
+    if (!process.env.OPENAI_API_KEY) {
+      console.error('OPENAI_API_KEY is not configured')
+      return NextResponse.json(
+        { error: 'AI service not configured' },
+        { status: 500 }
+      )
+    }
+    
     const body = await request.json()
     const { type, data } = RequestSchema.parse(body)
     
@@ -69,7 +78,10 @@ export async function POST(request: NextRequest) {
     const prompt = fillPromptTemplate(promptTemplate, data)
     
     // Generate AI response
-    const model = openai(process.env.OPENAI_MODEL_ID || 'gpt-4o')
+    const model = openai(process.env.AI_MODEL || 'gpt-4o')
+    
+    console.log('Generating AI response for type:', type)
+    console.log('Using model:', process.env.AI_MODEL || 'gpt-4o')
     
     const { text } = await generateText({
       model,
@@ -78,14 +90,18 @@ export async function POST(request: NextRequest) {
       maxTokens: type === 'features-roles' ? 1000 : 800
     })
     
+    console.log('AI response received, length:', text.length)
+    
     // Parse the JSON response with error handling
     let parsed
     try {
       parsed = JSON.parse(text)
     } catch (parseError) {
-      console.error('Failed to parse AI response:', text)
+      console.error('Failed to parse AI response:')
+      console.error('Raw text:', text)
+      console.error('Parse error:', parseError)
       return NextResponse.json(
-        { error: 'Invalid AI response format' },
+        { error: 'Invalid AI response format', details: text.substring(0, 200) },
         { status: 500 }
       )
     }

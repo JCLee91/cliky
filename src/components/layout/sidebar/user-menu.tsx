@@ -81,6 +81,10 @@ export function UserMenu({ collapsed = false }: UserMenuProps) {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
+    // Clear cache on logout
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('cliky_projects')
+    }
     router.push('/login')
   }
 

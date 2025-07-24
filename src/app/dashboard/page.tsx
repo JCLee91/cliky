@@ -117,7 +117,6 @@ export default function DashboardPage() {
     try {
       await generateTasksStream(selectedProject, prdContent)
     } catch (error) {
-      console.error('handleBreakdownToTasks error:', error)
       // Error is already handled in generateTasksStream with toast notification
       // No need to show another toast here
     }
@@ -125,20 +124,12 @@ export default function DashboardPage() {
 
   // Initialize projects on mount
   useEffect(() => {
-    console.log('[Dashboard] Component mounted, initializing projects...')
     initializeProjects()
   }, [initializeProjects])
 
   // Fetch tasks when project is selected
   useEffect(() => {
-    console.log('[Dashboard] Selected project changed:', { 
-      hasProject: !!selectedProject, 
-      projectId: selectedProject?.id,
-      projectName: selectedProject?.name 
-    })
-    
     if (selectedProject?.id) {
-      console.log('[Dashboard] Fetching tasks for project:', selectedProject.id)
       fetchTasks(selectedProject.id)
     }
   }, [selectedProject?.id, fetchTasks])

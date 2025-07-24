@@ -54,7 +54,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         event.error?.message?.includes('removeChild') ||
         event.error?.message?.includes('Failed to execute')
       ) {
-        console.warn('Chrome translation conflict detected. Preventing error propagation.');
+        // Chrome translation conflict detected. Preventing error propagation.
         event.preventDefault();
         // Optional: Force re-render by updating state or reload
         return true;

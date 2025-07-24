@@ -40,7 +40,7 @@ export default function ProfilePage() {
         .single()
 
       if (profileError && profileError.code !== 'PGRST116') {
-        console.error('Error loading profile:', profileError)
+        // Profile error - will be handled by toast below
       }
 
       if (profile) {
@@ -52,7 +52,6 @@ export default function ProfilePage() {
         setAvatarUrl(user.user_metadata?.avatar_url || '')
       }
     } catch (error) {
-      console.error('Error loading user:', error)
       toast.error('Failed to load profile')
     } finally {
       setLoading(false)
@@ -98,7 +97,6 @@ export default function ProfilePage() {
 
       // Success toast removed
     } catch (error: any) {
-      console.error('Error updating profile:', error)
       toast.error(error.message || 'Failed to update profile')
     } finally {
       setUpdating(false)
@@ -144,7 +142,6 @@ export default function ProfilePage() {
         })
 
       if (uploadError) {
-        console.error('Upload error:', uploadError)
         throw uploadError
       }
 
@@ -184,7 +181,6 @@ export default function ProfilePage() {
       
       // Success toast removed
     } catch (error: any) {
-      console.error('Error uploading avatar:', error)
       const errorMessage = error.message || 'Failed to upload avatar'
       
       if (errorMessage.includes('not found')) {

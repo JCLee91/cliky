@@ -103,7 +103,6 @@ export function useMCP(options?: UseMCPOptions) {
       .select('*')
 
     if (error) {
-      console.error('Error saving tasks:', error)
       throw new Error(`Failed to save tasks: ${error.message}`)
     }
 
@@ -111,12 +110,9 @@ export function useMCP(options?: UseMCPOptions) {
   }
 
   const fetchTasks = useCallback(async (projectId: string, forceRefresh = false): Promise<Task[]> => {
-    console.log('[fetchTasks] Called with:', { projectId, forceRefresh })
-    
     try {
       // Validate projectId
       if (!projectId || typeof projectId !== 'string') {
-        console.warn('[fetchTasks] Invalid projectId:', projectId)
         setTasks([])
         return []
       }
@@ -124,48 +120,34 @@ export function useMCP(options?: UseMCPOptions) {
       // Try cache first
       if (!forceRefresh) {
         const cached = CacheManager.get<Task[]>(CACHE_KEYS.TASKS(projectId), 5)
-        console.log('[fetchTasks] Cache check:', { hasCached: !!cached, count: cached?.length })
         
         if (cached) {
-          console.log('[fetchTasks] Using cached tasks')
           setTasks(cached)
           return cached
         }
       }
 
-      console.log('[fetchTasks] Fetching fresh tasks from database...')
-      
       const { data, error } = await supabase
         .from('tasks')
         .select('*')
         .eq('project_id', projectId)
         .order('order_index', { ascending: true })
 
-      console.log('[fetchTasks] Query result:', { 
-        success: !error, 
-        count: data?.length,
-        error,
-        tasks: data?.map(t => ({ id: t.id, title: t.title }))
-      })
-
       if (error) throw error
 
       const fetchedTasks = data || []
       
       // Update state and cache
-      console.log('[fetchTasks] Updating state with', fetchedTasks.length, 'tasks')
       setTasks(fetchedTasks)
       CacheManager.set(CACHE_KEYS.TASKS(projectId), fetchedTasks)
       
       return fetchedTasks
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Failed to fetch tasks.')
-      console.error('[fetchTasks] Error fetching tasks:', error)
       setError(error)
       
       // Try cache on error
       const cached = CacheManager.get<Task[]>(CACHE_KEYS.TASKS(projectId), 60)
-      console.log('[fetchTasks] Error fallback - using cache:', { hasCached: !!cached, count: cached?.length })
       
       const tasks = cached || []
       setTasks(tasks)
@@ -179,7 +161,6 @@ export function useMCP(options?: UseMCPOptions) {
   ): Promise<boolean> => {
     // Validate taskId
     if (!taskId || typeof taskId !== 'string') {
-      console.error('updateTask called with invalid taskId:', taskId)
       return false
     }
 

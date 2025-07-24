@@ -17,7 +17,6 @@ export class TaskmasterMCPClient {
       // For now, we'll simulate calling task-master CLI tools
       this.isConnected = true
     } catch (error) {
-      console.error('Failed to connect to Task Master MCP:', error)
       throw error
     }
   }

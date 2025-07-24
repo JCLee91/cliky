@@ -33,7 +33,9 @@ export function DeleteProjectDialog({
       await onConfirm()
       onOpenChange(false)
     } catch (error) {
-      console.error('Failed to delete project:', error)
+      // Error already handled by toast
+      // Close dialog on error too
+      onOpenChange(false)
     } finally {
       setIsDeleting(false)
     }

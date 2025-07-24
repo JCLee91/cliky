@@ -27,14 +27,13 @@ export async function POST(request: NextRequest) {
     // Brave Search API 키 확인
     const apiKey = process.env.BRAVE_SEARCH_API_KEY
     if (!apiKey) {
-      console.error('Brave Search API key not configured')
       return NextResponse.json(
         { error: 'Search service not configured' },
         { status: 503 }
       )
     }
     
-    console.log('🔍 Brave Search 시작:', { query, count, freshness })
+    // Start Brave Search
     
     // Brave Search API 호출
     const searchParams = new URLSearchParams({
@@ -58,7 +57,6 @@ export async function POST(request: NextRequest) {
     )
     
     if (!response.ok) {
-      console.error('Brave Search API error:', response.status, response.statusText)
       throw new Error(`Search API error: ${response.status}`)
     }
     
@@ -72,10 +70,7 @@ export async function POST(request: NextRequest) {
       age: result.age
     })) || []
     
-    console.log('✅ Brave Search 완료:', {
-      query,
-      resultsCount: results.length
-    })
+    // Search completed
     
     return NextResponse.json({
       success: true,
@@ -87,7 +82,6 @@ export async function POST(request: NextRequest) {
     })
     
   } catch (error) {
-    console.error('Search API Error:', error)
     
     if (error instanceof z.ZodError) {
       return NextResponse.json(

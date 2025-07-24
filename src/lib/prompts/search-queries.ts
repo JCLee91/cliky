@@ -102,8 +102,7 @@ Focus on solutions that can be integrated in hours, not days.`
 
     return queries
   } catch (error) {
-    console.error('AI 검색 쿼리 생성 오류:', error)
-    // 오류 시 빈 배열 반환
+    // AI search query generation error - return empty array
     return []
   }
 }

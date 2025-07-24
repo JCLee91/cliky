@@ -151,31 +151,19 @@ export async function POST(request: NextRequest) {
   try {
     let body = await request.json()
     
-    // Debug logging
-    console.log('=== TASKMASTER API DEBUG ===')
-    console.log('Received body:', JSON.stringify(body, null, 2))
-    console.log('Body keys:', Object.keys(body))
-    console.log('Has prompt?', 'prompt' in body)
-    console.log('Has action?', 'action' in body)
-    console.log('Body.body exists?', body.body !== undefined)
+    // Handle useCompletion hook format
     
     // Handle useCompletion hook format
     // The hook sends: { prompt: '', ...actualBodyParams }
     // We need to extract the actual body parameters
     if ('prompt' in body && !body.action) {
-      console.log('useCompletion format detected')
-      console.log('Original body structure:', JSON.stringify(body, null, 2))
-      
       // If body.body exists, use it (old format)
       if (body.body && typeof body.body === 'object') {
-        console.log('Found body.body - using nested body')
         body = body.body
       } else {
         // Otherwise, the actual parameters are merged at the top level
         // Remove the prompt field and use the rest
         const { prompt, ...actualBody } = body
-        console.log('No body.body - extracting from top level')
-        console.log('Extracted body:', JSON.stringify(actualBody, null, 2))
         body = actualBody
       }
     }
@@ -215,13 +203,6 @@ export async function POST(request: NextRequest) {
           )
       }
     } catch (error) {
-      console.error('=== VALIDATION ERROR ===')
-      console.error('Error:', error)
-      console.error('Body:', JSON.stringify(body, null, 2))
-      console.error('Body type:', typeof body)
-      console.error('Body keys:', Object.keys(body))
-      console.error('======================')
-      
       return NextResponse.json(
         { 
           error: 'Invalid request format', 
@@ -444,7 +425,6 @@ Start generating ${numTasks} tasks now:`
 
           return result.toTextStreamResponse()
         } catch (streamError) {
-          console.error('❌ Stream generation error:', streamError)
           throw streamError
         }
       }
@@ -506,8 +486,6 @@ Start generating ${numTasks} tasks now:`
     }
 
   } catch (error) {
-    console.error('TaskMaster API Error:', error)
-    
     // Check if it's a Zod validation error
     if (error instanceof z.ZodError) {
       return NextResponse.json(

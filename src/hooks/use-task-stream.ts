@@ -38,7 +38,6 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
     streamProtocol: 'text', // Use text protocol to match API's toTextStreamResponse()
     onResponse: async (response) => {
       if (!response.ok) {
-        console.error('Task generation response error:', response.status, response.statusText)
         // Don't try to read the body here - it will be read by the SDK
         const errorCallback = callbacksRef.current.onError || onError
         errorCallback?.(new Error(`HTTP ${response.status}: ${response.statusText}`))
@@ -78,10 +77,8 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
                 })
               }
             } catch (lineError) {
-              // 마크다운 코드 블록이 아닌 경우에만 경고
-              if (!trimmedLine.includes('```')) {
-                console.warn('Failed to parse line:', trimmedLine, lineError)
-              }
+              // 마크다운 코드 블록이 아닌 경우 무시
+              // Silently skip invalid lines
             }
           }
         }
@@ -115,9 +112,6 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
           throw new Error('No valid tasks were parsed')
         }
       } catch (error) {
-        console.error('❌ Task parsing error:', error)
-        console.error('Raw completion that failed to parse:', completion.substring(0, 500))
-        
         const errorMsg = error instanceof Error ? error : new Error('Failed to parse tasks')
         toast.error('Error parsing tasks: ' + errorMsg.message)
         const errorCallback = callbacksRef.current.onError || onError
@@ -128,7 +122,6 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
       }
     },
     onError: (error) => {
-      console.error('Task generation error:', error)
       toast.error('Error generating tasks: ' + error.message)
       const errorCallback = callbacksRef.current.onError || onError
       errorCallback?.(error)
@@ -241,7 +234,6 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
         }
       })
     } catch (err) {
-      console.error('generateTasksStream error:', err)
       const error = err instanceof Error ? err : new Error('Task generation failed')
       toast.error(error.message)
       const errorCallback = callbacksRef.current.onError || onError
@@ -335,7 +327,6 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
         // Success toast removed
       }
     } catch (error) {
-      console.error('Failed to expand complex tasks:', error)
       toast.error('Failed to expand complex tasks')
     } finally {
       setIsExpandingTasks(false)

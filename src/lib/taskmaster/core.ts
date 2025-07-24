@@ -383,7 +383,6 @@ export class TaskMasterCoreService {
         metadata: response.object.metadata
       }
     } catch (error) {
-      console.error('PRD 파싱 오류:', error)
       throw new Error(`PRD 파싱 실패: ${error instanceof Error ? error.message : '알 수 없는 오류'}`)
     }
   }
@@ -437,7 +436,6 @@ export class TaskMasterCoreService {
 
       return { task: expandedTask, subtasks }
     } catch (error) {
-      console.error('태스크 확장 오류:', error)
       throw new Error(`태스크 확장 실패: ${error instanceof Error ? error.message : '알 수 없는 오류'}`)
     }
   }

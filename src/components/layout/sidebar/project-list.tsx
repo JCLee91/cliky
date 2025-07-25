@@ -18,6 +18,7 @@ export function ProjectList({ className, onNewProject }: ProjectListProps) {
     selectedProject, 
     setSelectedProject, 
     setIsFormOpen,
+    setIsMethodModalOpen,
     isLoading,
     hasInitialized
   } = useProjectStore()
@@ -50,7 +51,7 @@ export function ProjectList({ className, onNewProject }: ProjectListProps) {
         className="w-full justify-start gap-2 h-auto p-3"
         onClick={() => {
           setSelectedProject(null)
-          setIsFormOpen(true)
+          setIsMethodModalOpen(true)
         }}
       >
         <Plus className="h-4 w-4" />

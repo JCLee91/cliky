@@ -9,15 +9,13 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 interface ProjectListProps {
   className?: string
-  onNewProject?: () => void
 }
 
-export function ProjectList({ className, onNewProject }: ProjectListProps) {
+export function ProjectList({ className }: ProjectListProps) {
   const { 
     projects, 
     selectedProject, 
     setSelectedProject, 
-    setIsFormOpen,
     setIsMethodModalOpen,
     isLoading,
     hasInitialized

@@ -32,7 +32,7 @@ export function ProjectList({ className, onNewProject }: ProjectListProps) {
           disabled
         >
           <Plus className="h-4 w-4" />
-          New Project
+          새 프로젝트
         </Button>
         <div className="space-y-2">
           {[...Array(3)].map((_, i) => (
@@ -62,7 +62,7 @@ export function ProjectList({ className, onNewProject }: ProjectListProps) {
           <CardContent className="flex flex-col items-center justify-center p-6 text-center">
             <FileText className="h-8 w-8 text-muted-foreground mb-2" />
             <p className="text-sm text-muted-foreground">
-              No projects yet
+              아직 프로젝트가 없습니다
             </p>
           </CardContent>
         </Card>

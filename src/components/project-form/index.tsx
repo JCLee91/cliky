@@ -127,15 +127,15 @@ export function ProjectForm({ open, onOpenChange, onSubmit, loading = false }: P
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl h-[95vh] p-0" onPointerDownOutside={(e) => e.preventDefault()}>
-        <DialogTitle className="sr-only">Create New Project</DialogTitle>
-        <DialogDescription className="sr-only">4-step project creation wizard</DialogDescription>
+        <DialogTitle className="sr-only">새 프로젝트 만들기</DialogTitle>
+        <DialogDescription className="sr-only">4단계 프로젝트 생성 마법사</DialogDescription>
         <Form {...form}>
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b">
             <div>
-              <h2 className="text-lg font-semibold">Create New Project</h2>
+              <h2 className="text-lg font-semibold">새 프로젝트 만들기</h2>
               <p className="text-sm text-muted-foreground">
-                Step {currentStep} of {TOTAL_STEPS}
+                단계 {currentStep} / {TOTAL_STEPS}
               </p>
             </div>
           </div>
@@ -166,7 +166,7 @@ export function ProjectForm({ open, onOpenChange, onSubmit, loading = false }: P
                 className="gap-2"
               >
                 <ChevronLeft className="h-4 w-4" />
-                Previous
+                이전
               </Button>
             ) : (
               <div />
@@ -179,7 +179,7 @@ export function ProjectForm({ open, onOpenChange, onSubmit, loading = false }: P
                   disabled={!canProceed() || loading}
                   className="gap-2"
                 >
-                  {loading ? 'Creating...' : 'Create Project'}
+                  {loading ? '생성 중...' : '프로젝트 생성'}
                 </Button>
               ) : (
                 <Button
@@ -187,7 +187,7 @@ export function ProjectForm({ open, onOpenChange, onSubmit, loading = false }: P
                   disabled={!canProceed()}
                   className="gap-2"
                 >
-                  Next
+                  다음
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               )}

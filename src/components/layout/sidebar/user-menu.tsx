@@ -109,20 +109,20 @@ export function UserMenu({ collapsed = false }: UserMenuProps) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuLabel>내 계정</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>
             <User className="mr-2 h-4 w-4" />
-            Profile
+            프로필
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Settings className="mr-2 h-4 w-4" />
-            Settings
+            설정
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleSignOut}>
             <LogOut className="mr-2 h-4 w-4" />
-            Sign out
+            로그아웃
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

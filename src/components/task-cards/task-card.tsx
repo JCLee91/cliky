@@ -237,7 +237,7 @@ export function TaskCard({ task, taskNumber, onUpdate, onDelete }: TaskCardProps
           ) : (
             <div>
               <CardDescription className="text-xs leading-relaxed">
-                {task.description || 'No description available.'}
+                {task.description || '설명이 없습니다.'}
               </CardDescription>
             </div>
           )}
@@ -393,7 +393,7 @@ export function TaskCard({ task, taskNumber, onUpdate, onDelete }: TaskCardProps
             <div>
               <h4 className="font-medium mb-2">Description</h4>
               <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                {task.description || 'No description available.'}
+                {task.description || '설명이 없습니다.'}
               </p>
             </div>
 

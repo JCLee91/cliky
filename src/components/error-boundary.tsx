@@ -64,9 +64,9 @@ function DefaultErrorFallback({ error, reset }: { error: Error; reset: () => voi
           <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-destructive/10 flex items-center justify-center">
             <AlertCircle className="h-6 w-6 text-destructive" />
           </div>
-          <CardTitle>Something went wrong</CardTitle>
+          <CardTitle>문제가 발생했습니다</CardTitle>
           <CardDescription>
-            An unexpected error has occurred. We apologize for the inconvenience.
+            예상치 못한 오류가 발생했습니다. 불편을 드려 죄송합니다.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -80,7 +80,7 @@ function DefaultErrorFallback({ error, reset }: { error: Error; reset: () => voi
           <div className="flex flex-col gap-2">
             <Button onClick={reset} className="w-full" variant="default">
               <RotateCcw className="mr-2 h-4 w-4" />
-              Try Again
+              다시 시도
             </Button>
             <Button 
               onClick={() => router.push('/dashboard')} 
@@ -88,7 +88,7 @@ function DefaultErrorFallback({ error, reset }: { error: Error; reset: () => voi
               variant="outline"
             >
               <Home className="mr-2 h-4 w-4" />
-              Go to Dashboard
+              대시보드로 이동
             </Button>
           </div>
         </CardContent>

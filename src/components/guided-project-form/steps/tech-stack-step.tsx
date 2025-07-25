@@ -38,22 +38,22 @@ export function TechStackStep() {
       // Organize tech stack into categories
       const categories: TechCategory[] = [
         {
-          name: 'Frontend',
+          name: '프론트엔드',
           icon: <Layout className={guidedFormStyles.iconSmall} />,
           items: data.frontend || []
         },
         {
-          name: 'Backend',
+          name: '백엔드',
           icon: <Code2 className={guidedFormStyles.iconSmall} />,
           items: data.backend || []
         },
         {
-          name: 'Database',
+          name: '데이터베이스',
           icon: <Database className={guidedFormStyles.iconSmall} />,
           items: data.database || []
         },
         {
-          name: 'Infrastructure',
+          name: '인프라',
           icon: <Settings className={guidedFormStyles.iconSmall} />,
           items: data.infrastructure || []
         }
@@ -105,8 +105,8 @@ export function TechStackStep() {
   return (
     <div className={guidedFormStyles.stepContainer}>
       <StepHeader
-        title="Recommended Tech Stack"
-        description="Based on your project requirements, here's our recommended technology stack."
+        title="추천 기술 스택"
+        description="프로젝트 요구 사항에 따른 추천 기술 스택입니다."
       />
 
       {isGenerating && !techCategories.length ? (
@@ -159,18 +159,18 @@ export function TechStackStep() {
       )}
 
       <div className="flex justify-center">
-        <Badge variant="secondary">{selectedTech.length} technologies selected</Badge>
+        <Badge variant="secondary">{selectedTech.length}개 기술 선택됨</Badge>
       </div>
 
       <AdditionalNotesField
         name="techStackNotes"
-        placeholder="Any specific technology preferences or constraints..."
+        placeholder="특정 기술 선호도나 제약 사항..."
       />
 
       <div className={guidedFormStyles.infoBox}>
         <p className={guidedFormStyles.mutedSmall}>
-          <strong>Note:</strong> These recommendations are based on current best practices and your project requirements. 
-          You can modify the selection based on your team's expertise and preferences.
+          <strong>참고:</strong> 이 추천은 현재 베스트 프랙티스와 프로젝트 요구 사항을 기반으로 합니다. 
+          팀의 전문 지식과 선호도에 따라 선택을 수정할 수 있습니다.
         </p>
       </div>
     </div>

@@ -63,8 +63,8 @@ export function UserFlowStep() {
   return (
     <div className={guidedFormStyles.stepContainer}>
       <StepHeader
-        title="Select Your User Flow"
-        description="Based on your product description, here are two user flow approaches. Choose the one that best fits your vision."
+        title="사용자 플로우를 선택하세요"
+        description="제품 설명을 바탕으로 두 가지 사용자 플로우 접근 방식을 제공합니다. 비전에 가장 잘 맞는 것을 선택하세요."
       />
 
       <div className={guidedFormStyles.gridTwoColumn}>
@@ -95,7 +95,7 @@ export function UserFlowStep() {
 
       <AdditionalNotesField
         name="userFlowNotes"
-        placeholder="Any specific user journeys or flow modifications you'd like to emphasize..."
+        placeholder="강조하고 싶은 특정 사용자 여정이나 플로우 수정 사항..."
       />
     </div>
   )

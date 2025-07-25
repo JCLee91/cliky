@@ -36,7 +36,7 @@ export function useAIGeneration({
           statusText: response.statusText,
           error: errorData
         })
-        throw new Error(errorData.error || 'Failed to generate')
+        throw new Error(errorData.error || '생성 실패')
       }
       
       const data = await response.json()
@@ -44,7 +44,7 @@ export function useAIGeneration({
       onSuccess?.(data)
       return data
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Generation failed'
+      const message = error instanceof Error ? error.message : '생성 실패'
       setError(message)
       toast.error(message)
       throw error

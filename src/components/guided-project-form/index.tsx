@@ -163,15 +163,15 @@ export function GuidedProjectForm({ open, onOpenChange, onSubmit, loading = fals
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl h-[95vh] p-0" onPointerDownOutside={(e) => e.preventDefault()}>
-        <DialogTitle className="sr-only">Create New Project - Guided Mode</DialogTitle>
-        <DialogDescription className="sr-only">5-step AI-guided project creation wizard</DialogDescription>
+        <DialogTitle className="sr-only">새 프로젝트 만들기 - 가이드 모드</DialogTitle>
+        <DialogDescription className="sr-only">5단계 AI 가이드 프로젝트 생성 마법사</DialogDescription>
         <Form {...form}>
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b">
             <div>
-              <h2 className="text-lg font-semibold">Create New Project</h2>
+              <h2 className="text-lg font-semibold">새 프로젝트 만들기</h2>
               <p className="text-sm text-muted-foreground">
-                AI-Guided Mode • Step {currentStep} of {TOTAL_STEPS}
+                AI 가이드 모드 • 단계 {currentStep} / {TOTAL_STEPS}
               </p>
             </div>
           </div>
@@ -203,7 +203,7 @@ export function GuidedProjectForm({ open, onOpenChange, onSubmit, loading = fals
                 className="gap-2"
               >
                 <ChevronLeft className={guidedFormStyles.iconSmall} />
-                Previous
+                이전
               </Button>
             ) : (
               <div />
@@ -216,7 +216,7 @@ export function GuidedProjectForm({ open, onOpenChange, onSubmit, loading = fals
                   disabled={!canProceed() || loading}
                   className="gap-2"
                 >
-                  {loading ? 'Creating...' : 'Generate PRD'}
+                  {loading ? '생성 중...' : 'PRD 생성'}
                 </Button>
               ) : (
                 <Button
@@ -224,7 +224,7 @@ export function GuidedProjectForm({ open, onOpenChange, onSubmit, loading = fals
                   disabled={!canProceed()}
                   className="gap-2"
                 >
-                  Next
+                  다음
                   <ChevronRight className={guidedFormStyles.iconSmall} />
                 </Button>
               )}

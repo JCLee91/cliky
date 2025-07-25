@@ -42,7 +42,7 @@ export default function MockDashboard() {
                 <div>
                   <h1 className="text-2xl font-bold mb-2">{selectedProject.name}</h1>
                   <p className="text-muted-foreground">
-                    PRD generated • {currentTasks.length} tasks
+                    PRD 생성됨 • 작업 {currentTasks.length}개
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -52,7 +52,7 @@ export default function MockDashboard() {
                     className="gap-2"
                   >
                     <Plus className="h-4 w-4" />
-                    New Project
+                    새 프로젝트
                   </Button>
                 </div>
               </div>
@@ -79,9 +79,9 @@ export default function MockDashboard() {
             >
               {/* Welcome Section */}
               <div className="mb-8">
-                <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
+                <h1 className="text-2xl font-bold mb-2">대시보드</h1>
                 <p className="text-muted-foreground">
-                  Transform your project ideas into PRDs and task lists with AI
+                  AI로 프로젝트 아이디어를 PRD와 작업 목록으로 변환하세요
                 </p>
               </div>
 
@@ -91,10 +91,10 @@ export default function MockDashboard() {
                   <CardContent className="pt-6">
                     <EmptyMessage
                       icon={Sparkles}
-                      message="Create your first project"
-                      description="Enter your idea and AI will generate a PRD and task list"
+                      message="첫 프로젝트를 만들어보세요"
+                      description="아이디어를 입력하면 AI가 PRD와 작업 목록을 생성합니다"
                       action={{
-                        label: "Start my project",
+                        label: "프로젝트 시작하기",
                         onClick: handleInteraction
                       }}
                     />
@@ -109,7 +109,7 @@ export default function MockDashboard() {
         {selectedProject && (
           <OnboardingHint
             direction="right"
-            message="Try it with your own idea!"
+            message="당신의 아이디어로 시도해보세요!"
             targetPosition={{ 
               top: '35px', 
               right: '200px' 

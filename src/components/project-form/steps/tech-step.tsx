@@ -13,23 +13,23 @@ export function TechStep() {
   // MVP에서 가장 인기 있는 순서로 정렬
   const techOptions = [
     { 
-      category: 'Frontend', 
+      category: '프론트엔드', 
       items: ['Next.js', 'React', 'Vue.js', 'Svelte', 'Angular', 'Nuxt.js'] 
     },
     { 
-      category: 'Backend', 
+      category: '백엔드', 
       items: ['Node.js', 'Python/FastAPI', 'Python/Django', 'Go', 'Java/Spring', 'C#/.NET', 'Rust'] 
     },
     { 
-      category: 'Database', 
+      category: '데이터베이스', 
       items: ['Supabase', 'PostgreSQL', 'Firebase', 'MongoDB', 'MySQL', 'Redis'] 
     },
     { 
-      category: 'Deployment', 
+      category: '배포', 
       items: ['Vercel', 'Netlify', 'Railway', 'AWS', 'Google Cloud', 'Azure'] 
     },
     { 
-      category: 'Mobile', 
+      category: '모바일', 
       items: ['React Native', 'Expo', 'Flutter', 'Swift', 'Kotlin'] 
     },
     { 
@@ -49,19 +49,19 @@ export function TechStep() {
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <h3 className="text-xl font-semibold">Select your tech preferences</h3>
+        <h3 className="text-xl font-semibold">기술 스택을 선택해주세요</h3>
         <p className="text-muted-foreground">
-          Select your preferred tech stack if you have any (optional)
+          선호하는 기술 스택이 있다면 선택해주세요 (선택사항)
         </p>
       </div>
 
       {/* Tips section */}
       <div className="bg-muted/50 p-4 rounded-lg">
-        <h4 className="font-medium mb-2">💡 Notes</h4>
+        <h4 className="font-medium mb-2">💡 참고사항</h4>
         <ul className="text-sm text-muted-foreground space-y-1">
-          <li>• AI will recommend an optimized tech stack even if you don&apos;t select any</li>
-          <li>• Selecting too many technologies may increase complexity</li>
-          <li>• Consider your team&apos;s experience and project scale when selecting</li>
+          <li>• 아무것도 선택하지 않아도 AI가 최적화된 기술 스택을 추천해드립니다</li>
+          <li>• 너무 많은 기술을 선택하면 복잡도가 높아질 수 있습니다</li>
+          <li>• 팀의 경험과 프로젝트 규모를 고려하여 선택하세요</li>
         </ul>
       </div>
 
@@ -70,9 +70,9 @@ export function TechStep() {
         name="techPreferences"
         render={() => (
           <FormItem>
-            <FormLabel className="text-base">Preferred Tech Stack</FormLabel>
+            <FormLabel className="text-base">선호 기술 스택</FormLabel>
             <FormDescription>
-              Select the technologies you&apos;d specifically like to use. If you don&apos;t select any, we&apos;ll recommend the best tech stack for your project.
+              특별히 사용하고 싶은 기술을 선택해주세요. 선택하지 않으면 프로젝트에 가장 적합한 기술 스택을 추천해드립니다.
             </FormDescription>
           </FormItem>
         )}
@@ -110,7 +110,7 @@ export function TechStep() {
 
       {techPreferences.length > 0 && (
         <div className="bg-primary/10 p-4 rounded-lg">
-          <h4 className="font-medium mb-2">Selected Tech Stack ({techPreferences.length})</h4>
+          <h4 className="font-medium mb-2">선택한 기술 스택 ({techPreferences.length})</h4>
           <div className="flex flex-wrap gap-2">
             {techPreferences.map((tech) => (
               <Badge key={tech} variant="secondary">

@@ -106,7 +106,7 @@ export function DownloadMenu({ content, filename, className, customXMLConverter 
           className={`gap-2 ${className || ''}`}
         >
           <Download className="h-4 w-4" />
-          Download
+          다운로드
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

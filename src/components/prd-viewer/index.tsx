@@ -30,7 +30,7 @@ export function PRDViewer({ content, isGenerating, projectName }: PRDViewerProps
       // Success toast removed
       setTimeout(() => setIsCopied(false), 2000)
     } catch (error) {
-      toast.error('Failed to copy.')
+      toast.error('복사에 실패했습니다.')
     }
   }
 
@@ -39,7 +39,7 @@ export function PRDViewer({ content, isGenerating, projectName }: PRDViewerProps
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <CardTitle className="text-xl">📋 Product Requirements Document</CardTitle>
+            <CardTitle className="text-xl">📋 제품 요구사항 문서</CardTitle>
             {isGenerating && (
               <Badge variant="secondary" className="p-1.5">
                 <Loader2 className="h-3 w-3 animate-spin" />
@@ -71,7 +71,7 @@ export function PRDViewer({ content, isGenerating, projectName }: PRDViewerProps
                         <Copy className="h-4 w-4" />
                       )}
                     </AnimatePresence>
-                    {isCopied ? 'Copied!' : 'Copy'}
+                    {isCopied ? '복사됨!' : '복사'}
                   </Button>
                   <DownloadMenu content={content} filename={projectName ? `${projectName}_PRD` : "PRD"} />
                 </motion.div>
@@ -87,7 +87,7 @@ export function PRDViewer({ content, isGenerating, projectName }: PRDViewerProps
           >
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-              AI is writing PRD in real-time...
+              AI가 실시간으로 PRD를 작성하고 있습니다...
             </div>
             <div className="w-full bg-secondary rounded-full h-1 overflow-hidden">
               <motion.div 
@@ -114,9 +114,9 @@ export function PRDViewer({ content, isGenerating, projectName }: PRDViewerProps
             >
               <div className="text-center space-y-2">
                 <div className="text-4xl">📋</div>
-                <h3 className="text-lg font-medium">PRD will appear here once generated</h3>
+                <h3 className="text-lg font-medium">PRD가 생성되면 여기에 표시됩니다</h3>
                 <p className="text-sm text-muted-foreground">
-                  Complete the project form and click generate
+                  프로젝트 폼을 작성하고 생성 버튼을 클릭하세요
                 </p>
               </div>
             </motion.div>

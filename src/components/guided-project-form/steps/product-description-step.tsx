@@ -57,8 +57,8 @@ export function ProductDescriptionStep() {
   return (
     <div className={guidedFormStyles.stepContainer}>
       <StepHeader
-        title="Choose Your Product Direction"
-        description="We've generated two product descriptions based on your idea. Choose the one that best matches your vision."
+        title="제품 방향을 선택하세요"
+        description="아이디어를 바탕으로 두 가지 제품 설명을 생성했습니다. 비전에 가장 잘 맞는 것을 선택하세요."
       />
 
       <div className={guidedFormStyles.gridTwoColumn}>
@@ -89,7 +89,7 @@ export function ProductDescriptionStep() {
 
       <AdditionalNotesField
         name="productDescriptionNotes"
-        placeholder="Any additional details or modifications you'd like to add to the selected description..."
+        placeholder="선택한 설명에 추가하고 싶은 세부 사항이나 수정 사항..."
       />
     </div>
   )

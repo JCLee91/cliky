@@ -37,7 +37,7 @@ export function useAIStream(options?: UseAIStreamOptions) {
       callbacksRef.current = {}
     },
     onError: (error) => {
-      toast.error('Error occurred during PRD generation.')
+      toast.error('PRD 생성 중 오류가 발생했습니다.')
       // Use dynamic callback if available, otherwise use hook option
       const errorCallback = callbacksRef.current.onError || onError
       errorCallback?.(error)
@@ -66,7 +66,7 @@ export function useAIStream(options?: UseAIStreamOptions) {
         }
       })
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('PRD generation failed')
+      const error = err instanceof Error ? err : new Error('PRD 생성 실패')
       toast.error(error.message)
       const errorCallback = callbacksRef.current.onError || onError
       errorCallback?.(error)

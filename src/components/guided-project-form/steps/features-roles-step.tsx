@@ -84,8 +84,8 @@ export function FeaturesRolesStep() {
   return (
     <div className={guidedFormStyles.stepContainer}>
       <StepHeader
-        title="Core Features & User Roles"
-        description="We've identified key features and user roles for your project. Customize as needed."
+        title="핵심 기능 및 사용자 역할"
+        description="프로젝트에 필요한 핵심 기능과 사용자 역할을 식별했습니다. 필요에 따라 사용자 정의하세요."
       />
 
       <div className={guidedFormStyles.gridTwoColumnLarge}>
@@ -94,7 +94,7 @@ export function FeaturesRolesStep() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Sparkles className={guidedFormStyles.iconMedium} />
-              Core Features
+              핵심 기능
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -132,7 +132,7 @@ export function FeaturesRolesStep() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className={guidedFormStyles.iconMedium} />
-              User Roles
+              사용자 역할
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -166,13 +166,13 @@ export function FeaturesRolesStep() {
       </div>
 
       <div className="flex justify-center gap-2 text-sm text-muted-foreground">
-        <Badge variant="secondary">{selectedFeatures.length} features selected</Badge>
-        <Badge variant="secondary">{selectedRoles.length} roles selected</Badge>
+        <Badge variant="secondary">{selectedFeatures.length}개 기능 선택됨</Badge>
+        <Badge variant="secondary">{selectedRoles.length}개 역할 선택됨</Badge>
       </div>
 
       <AdditionalNotesField
         name="featuresNotes"
-        placeholder="Any specific features or roles you'd like to add or modify..."
+        placeholder="추가하거나 수정하고 싶은 특정 기능이나 역할..."
       />
     </div>
   )

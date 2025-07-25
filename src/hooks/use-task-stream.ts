@@ -83,7 +83,7 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
         }
       } catch (error) {
         const errorMsg = error instanceof Error ? error : new Error('Failed to parse tasks')
-        toast.error('Error parsing tasks: ' + errorMsg.message)
+        toast.error('작업 분석 오류: ' + errorMsg.message)
         const errorCallback = callbacksRef.current.onError || onError
         errorCallback?.(errorMsg)
       } finally {
@@ -92,7 +92,7 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
       }
     },
     onError: (error) => {
-      toast.error('Error generating tasks: ' + error.message)
+      toast.error('작업 생성 오류: ' + error.message)
       const errorCallback = callbacksRef.current.onError || onError
       errorCallback?.(error)
       // Clear dynamic callbacks
@@ -177,7 +177,7 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
         }
       })
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('Task generation failed')
+      const error = err instanceof Error ? err : new Error('작업 생성 실패')
       toast.error(error.message)
       const errorCallback = callbacksRef.current.onError || onError
       errorCallback?.(error)
@@ -223,7 +223,7 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
       setIsExpandingTasks(true)
       
       
-      toast.info(`Expanding ${complexTasks.length} complex tasks...`)
+      toast.info(`${complexTasks.length}개의 복잡한 작업을 확장하고 있습니다...`)
       
       const response = await fetch('/api/taskmaster', {
         method: 'POST',
@@ -267,7 +267,7 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
         // Success toast removed
       }
     } catch (error) {
-      toast.error('Failed to expand complex tasks')
+      toast.error('복잡한 작업 확장 실패')
     } finally {
       setIsExpandingTasks(false)
     }

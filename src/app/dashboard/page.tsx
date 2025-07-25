@@ -97,7 +97,7 @@ export default function DashboardPage() {
         })
       })
     } catch (error) {
-      toast.error('Failed to complete project setup')
+      toast.error('프로젝트 설정을 완료하지 못했습니다')
     }
   }
 
@@ -166,7 +166,7 @@ export default function DashboardPage() {
         })
       })
     } catch (error) {
-      toast.error('Failed to complete project setup')
+      toast.error('프로젝트 설정을 완료하지 못했습니다')
     }
   }
 
@@ -181,7 +181,7 @@ export default function DashboardPage() {
     
     const prdContent = selectedProject.trd_content || ''
     if (!prdContent) {
-      toast.error('No PRD content to analyze')
+      toast.error('분석할 PRD 내용이 없습니다')
       return
     }
 
@@ -221,10 +221,10 @@ export default function DashboardPage() {
               <div>
                 <h1 className="text-2xl font-bold mb-2">{selectedProject.name}</h1>
                 <p className="text-muted-foreground">
-                  {selectedProject.status === 'trd_generated' ? 'PRD generated' : 
-                   selectedProject.status === 'generating' ? 'Generating PRD...' : 
-                   'Draft'}
-                  {tasks.length > 0 && ` • ${tasks.length} tasks`}
+                  {selectedProject.status === 'trd_generated' ? 'PRD 생성됨' : 
+                   selectedProject.status === 'generating' ? 'PRD 생성 중...' : 
+                   '초안'}
+                  {tasks.length > 0 && ` • 작업 ${tasks.length}개`}
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -238,7 +238,7 @@ export default function DashboardPage() {
                 </Button>
                 <Button onClick={handleNewProject} variant="outline" className="gap-2">
                   <Plus className="h-4 w-4" />
-                  New Project
+                  새 프로젝트
                 </Button>
               </div>
             </div>
@@ -275,9 +275,9 @@ export default function DashboardPage() {
           >
             {/* Welcome Section */}
             <div className="mb-8">
-              <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
+              <h1 className="text-2xl font-bold mb-2">대시보드</h1>
               <p className="text-muted-foreground">
-                Transform your project ideas into PRDs and task lists with AI
+                AI로 프로젝트 아이디어를 PRD와 작업 목록으로 변환하세요
               </p>
             </div>
 
@@ -287,10 +287,10 @@ export default function DashboardPage() {
                 <CardContent className="pt-6">
                   <EmptyMessage
                     icon={Sparkles}
-                    message="Create your first project"
-                    description="Enter your idea and AI will generate a PRD and task list"
+                    message="첫 프로젝트를 만들어보세요"
+                    description="아이디어를 입력하면 AI가 PRD와 작업 목록을 생성합니다"
                     action={{
-                      label: "Create New Project",
+                      label: "새 프로젝트 만들기",
                       onClick: () => setIsMethodModalOpen(true)
                     }}
                   />

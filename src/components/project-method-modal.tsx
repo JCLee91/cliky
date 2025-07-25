@@ -25,10 +25,10 @@ export function ProjectMethodModal() {
     <Dialog open={isMethodModalOpen} onOpenChange={setIsMethodModalOpen}>
       <DialogContent className="max-w-3xl p-8">
         <DialogTitle className="text-2xl font-bold text-center mb-2">
-          How would you like to create your project?
+          프로젝트를 어떻게 만드시겠어요?
         </DialogTitle>
         <DialogDescription className="text-center text-muted-foreground mb-8">
-          Choose your preferred method to start building
+          선호하는 방법을 선택하여 시작하세요
         </DialogDescription>
         
         <div className="grid grid-cols-2 gap-6">
@@ -42,10 +42,9 @@ export function ProjectMethodModal() {
             >
               <CardHeader className="text-center p-8">
                 <Sparkles className="w-12 h-12 mb-4 mx-auto text-primary" />
-                <CardTitle className="text-xl mb-3">Choose what I want</CardTitle>
+                <CardTitle className="text-xl mb-3">원하는 것을 선택하기</CardTitle>
                 <CardDescription className="text-base">
-                  Let AI guide you through a step-by-step process with personalized recommendations
-                  and options to choose from
+                  AI가 맞춤형 추천과 선택 옵션으로 단계별 프로세스를 안내해드립니다
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -61,10 +60,10 @@ export function ProjectMethodModal() {
             >
               <CardHeader className="text-center p-8">
                 <FileEdit className="w-12 h-12 mb-4 mx-auto text-primary" />
-                <CardTitle className="text-xl mb-3">Start from scratch</CardTitle>
+                <CardTitle className="text-xl mb-3">처음부터 시작하기</CardTitle>
                 <CardDescription className="text-base">
-                  Use our classic 4-step form to describe your project idea, features, 
-                  user flow, and tech preferences
+                  클래식한 4단계 폼을 사용하여 프로젝트 아이디어, 기능, 
+                  사용자 흐름, 기술 선호도를 설명하세요
                 </CardDescription>
               </CardHeader>
             </Card>

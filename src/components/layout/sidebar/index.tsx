@@ -54,7 +54,7 @@ export function Sidebar({ className }: SidebarProps) {
               <div className="space-y-4">
                 <div>
                   <h3 className="mb-2 text-sm font-medium text-muted-foreground">
-                    Projects
+                    프로젝트
                   </h3>
                   <ProjectList />
                 </div>

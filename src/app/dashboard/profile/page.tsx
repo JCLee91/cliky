@@ -52,7 +52,7 @@ export default function ProfilePage() {
         setAvatarUrl(user.user_metadata?.avatar_url || '')
       }
     } catch (error) {
-      toast.error('Failed to load profile')
+      toast.error('프로필 불러오기 실패')
     } finally {
       setLoading(false)
     }
@@ -97,7 +97,7 @@ export default function ProfilePage() {
 
       // Success toast removed
     } catch (error: any) {
-      toast.error(error.message || 'Failed to update profile')
+      toast.error(error.message || '프로필 업데이트 실패')
     } finally {
       setUpdating(false)
     }
@@ -113,14 +113,14 @@ export default function ProfilePage() {
       
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        toast.error('File size must be less than 5MB')
+        toast.error('파일 크기는 5MB 미만이어야 합니다')
         return
       }
 
       // Validate file type
       const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
       if (!validTypes.includes(file.type)) {
-        toast.error('Please upload a valid image file (JPEG, PNG, GIF, or WebP)')
+        toast.error('유효한 이미지 파일을 업로드해주세요 (JPEG, PNG, GIF, 또는 WebP)')
         return
       }
 
@@ -184,9 +184,9 @@ export default function ProfilePage() {
       const errorMessage = error.message || 'Failed to upload avatar'
       
       if (errorMessage.includes('not found')) {
-        toast.error('Storage bucket not configured. Please contact support.')
+        toast.error('스토리지 버킷이 구성되지 않았습니다. 지원팀에 문의해주세요.')
       } else if (errorMessage.includes('policy')) {
-        toast.error('Permission denied. Please try again.')
+        toast.error('권한이 거부되었습니다. 다시 시도해주세요.')
       } else {
         toast.error(errorMessage)
       }
@@ -205,9 +205,9 @@ export default function ProfilePage() {
     <div className="container max-w-2xl py-8">
       <Card>
         <CardHeader>
-          <CardTitle>Profile</CardTitle>
+          <CardTitle>프로필</CardTitle>
           <CardDescription>
-            Manage your account information
+            계정 정보를 관리하세요
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -240,7 +240,7 @@ export default function ProfilePage() {
           {/* Form Section */}
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">이메일</Label>
               <Input
                 id="email"
                 type="email"
@@ -251,18 +251,18 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="fullName">Full Name</Label>
+              <Label htmlFor="fullName">전체 이름</Label>
               <Input
                 id="fullName"
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                placeholder="Enter your full name"
+                placeholder="전체 이름을 입력하세요"
               />
             </div>
 
             <div className="space-y-2">
-              <Label>User ID</Label>
+              <Label>사용자 ID</Label>
               <Input
                 value={user?.id || ''}
                 disabled
@@ -271,7 +271,7 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Created At</Label>
+              <Label>가입일</Label>
               <Input
                 value={user?.created_at ? new Date(user.created_at).toLocaleString() : ''}
                 disabled
@@ -287,13 +287,13 @@ export default function ProfilePage() {
               disabled={updating}
             >
               {updating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Save Changes
+              변경사항 저장
             </Button>
             <Button 
               variant="outline" 
               onClick={() => router.push('/dashboard')}
             >
-              Cancel
+              취소
             </Button>
           </div>
         </CardContent>

@@ -11,20 +11,20 @@ export function IdeaStep() {
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <h3 className="text-xl font-semibold">Tell us about your project idea</h3>
+        <h3 className="text-xl font-semibold">프로젝트 아이디어를 알려주세요</h3>
         <p className="text-muted-foreground">
-          What would you like to build? The more details you provide, the better PRD we can generate.
+          무엇을 만들고 싶으신가요? 더 자세히 설명해주실수록 더 좋은 PRD를 생성할 수 있습니다.
         </p>
       </div>
 
       {/* Tips section */}
       <div className="bg-muted/50 p-4 rounded-lg">
-        <h4 className="font-medium mb-2">💡 Tips</h4>
+        <h4 className="font-medium mb-2">💡 팁</h4>
         <ul className="text-sm text-muted-foreground space-y-1">
-          <li>• Be specific about the problem you&apos;re solving</li>
-          <li>• Mention your target users and their pain points</li>
-          <li>• Include any unique value proposition or differentiators</li>
-          <li>• Don&apos;t worry about technical details yet - focus on the &quot;what&quot; and &quot;why&quot;</li>
+          <li>• 해결하려는 문제를 구체적으로 설명해주세요</li>
+          <li>• 타겟 사용자와 그들의 고민을 언급해주세요</li>
+          <li>• 고유한 가치 제안이나 차별점을 포함해주세요</li>
+          <li>• 아직 기술적인 세부사항은 걱정하지 마세요 - &quot;무엇을&quot;, &quot;왜&quot;에 집중하세요</li>
         </ul>
       </div>
 
@@ -34,10 +34,10 @@ export function IdeaStep() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-base">Project Name</FormLabel>
+              <FormLabel className="text-base">프로젝트 이름</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="e.g., Online Marketplace, Blog Platform, Task Management App"
+                  placeholder="예: 온라인 마켓플레이스, 블로그 플랫폼, 작업 관리 앱"
                   className="text-base"
                   autoComplete="off"
                   data-no-translate="true"
@@ -54,13 +54,13 @@ export function IdeaStep() {
           name="idea"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-base">Project Idea</FormLabel>
+              <FormLabel className="text-base">프로젝트 아이디어</FormLabel>
               <FormDescription>
-                Describe the purpose, problem to solve, and target users
+                목적, 해결하려는 문제, 타겟 사용자를 설명해주세요
               </FormDescription>
               <FormControl>
                 <Textarea
-                  placeholder="e.g., I want to create an e-commerce platform where users can easily shop online. It needs product search, cart, payment, and order management features. Admins should be able to manage products and orders..."
+                  placeholder="예: 사용자가 온라인에서 쉽게 쇼핑할 수 있는 이커머스 플랫폼을 만들고 싶습니다. 상품 검색, 장바구니, 결제, 주문 관리 기능이 필요합니다. 관리자는 상품과 주문을 관리할 수 있어야 합니다..."
                   className="min-h-32 text-base resize-none"
                   autoComplete="off"
                   data-no-translate="true"

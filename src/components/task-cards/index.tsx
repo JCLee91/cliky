@@ -46,13 +46,13 @@ export function TaskCards({
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                📋 Task List
+                📋 작업 목록
                 <Badge variant="secondary" className="p-1.5">
                   <Loader2 className="h-3 w-3 animate-spin" />
                 </Badge>
               </CardTitle>
               <CardDescription>
-                AI is analyzing PRD and creating tasks...
+                AI가 PRD를 분석하여 작업을 생성하고 있습니다...
               </CardDescription>
             </div>
           </div>
@@ -76,15 +76,15 @@ export function TaskCards({
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                📋 Task List
+                📋 작업 목록
                 {isPRDGenerating && (
                   <Badge variant="secondary" className="text-xs">
-                    Waiting for PRD...
+                    PRD 대기 중...
                   </Badge>
                 )}
               </CardTitle>
               <CardDescription>
-                Break down PRD into actionable tasks
+                PRD를 실행 가능한 작업으로 분해
               </CardDescription>
             </div>
           </div>
@@ -97,10 +97,10 @@ export function TaskCards({
               >
                 <EmptyMessage
                   icon={FileText}
-                  message={isPRDGenerating ? "Waiting for PRD generation to complete..." : "Ready to generate tasks"}
-                  description={isPRDGenerating ? "Tasks will be available once the PRD is ready" : "AI will analyze the PRD and create a task list"}
+                  message={isPRDGenerating ? "PRD 생성이 완료될 때까지 대기 중..." : "작업 생성 준비 완료"}
+                  description={isPRDGenerating ? "PRD가 준비되면 작업을 사용할 수 있습니다" : "AI가 PRD를 분석하여 작업 목록을 생성합니다"}
                   action={!isPRDGenerating && onBreakdownToTasks ? {
-                    label: "Break Down to Tasks",
+                    label: "작업으로 분해",
                     onClick: onBreakdownToTasks
                   } : undefined}
                 />
@@ -121,16 +121,16 @@ export function TaskCards({
             📋 Task List
           </CardTitle>
           <CardDescription>
-            No tasks created yet
+            아직 생성된 작업이 없습니다
           </CardDescription>
         </CardHeader>
         <CardContent className="flex-1 flex items-center justify-center">
           <EmptyMessage
             icon={Plus}
-            message="No tasks yet"
-            description="Generate tasks from PRD or add manually"
+            message="아직 작업이 없습니다"
+            description="PRD에서 작업을 생성하거나 수동으로 추가하세요"
             action={onAddTask ? {
-              label: "Add Task",
+              label: "작업 추가",
               onClick: onAddTask
             } : undefined}
           />
@@ -146,7 +146,7 @@ export function TaskCards({
         <div className="flex items-center justify-between">
           <div className="flex-1">
             <CardTitle className="flex items-center gap-2">
-              📋 Task List
+              📋 작업 목록
               {isLoading && (
                 <Badge variant="secondary" className="p-1.5">
                   <Loader2 className="h-3 w-3 animate-spin" />
@@ -154,14 +154,14 @@ export function TaskCards({
               )}
               {!isLoading && (
                 <Badge variant="secondary">
-                  {tasks.length} task{tasks.length !== 1 ? 's' : ''}
+                  {tasks.length}개 작업
                 </Badge>
               )}
             </CardTitle>
             <CardDescription>
               {isLoading 
-                ? `${tasks.length} tasks generated so far...`
-                : `${tasks.filter(t => t.status === 'completed').length}/${tasks.length} completed`
+                ? `현재까지 ${tasks.length}개 작업 생성됨...`
+                : `${tasks.filter(t => t.status === 'completed').length}/${tasks.length} 완료`
               }
             </CardDescription>
           </div>
@@ -170,7 +170,7 @@ export function TaskCards({
             {onAddTask && (
               <Button onClick={onAddTask} size="sm" variant="outline" className="gap-2">
                 <Plus className="h-4 w-4" />
-                Add Task
+                작업 추가
               </Button>
             )}
           </div>

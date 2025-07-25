@@ -12,7 +12,7 @@ interface AdditionalNotesFieldProps {
 
 export function AdditionalNotesField({ 
   name, 
-  label = 'Additional Notes (Optional)', 
+  label = '추가 참고사항 (선택사항)', 
   placeholder 
 }: AdditionalNotesFieldProps) {
   const form = useFormContext()

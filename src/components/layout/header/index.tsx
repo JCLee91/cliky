@@ -49,7 +49,7 @@ export function Header({ onMenuClick, className }: HeaderProps) {
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <input
                 type="search"
-                placeholder="Search projects..."
+                placeholder="프로젝트 검색..."
                 className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 pl-9 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
               />
             </div>
@@ -64,7 +64,7 @@ export function Header({ onMenuClick, className }: HeaderProps) {
               className="gap-2"
             >
               <HelpCircle className="h-4 w-4" />
-              <span className="hidden sm:inline">How to Use</span>
+              <span className="hidden sm:inline">사용 방법</span>
             </Button>
             <ThemeToggle />
           </div>

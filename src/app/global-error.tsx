@@ -26,9 +26,9 @@ export default function GlobalError({
               <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-destructive/10 flex items-center justify-center">
                 <AlertTriangle className="h-6 w-6 text-destructive" />
               </div>
-              <CardTitle>System Error</CardTitle>
+              <CardTitle>시스템 오류</CardTitle>
               <CardDescription>
-                A critical error has occurred. Please refresh the page or try again later.
+                심각한 오류가 발생했습니다. 페이지를 새로고침하거나 나중에 다시 시도해주세요.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -44,7 +44,7 @@ export default function GlobalError({
               )}
               <Button onClick={reset} className="w-full">
                 <RotateCcw className="mr-2 h-4 w-4" />
-                Refresh Page
+                페이지 새로고침
               </Button>
             </CardContent>
           </Card>

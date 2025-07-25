@@ -29,9 +29,9 @@ export default function DashboardError({
           <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-destructive/10 flex items-center justify-center">
             <AlertCircle className="h-6 w-6 text-destructive" />
           </div>
-          <CardTitle>Dashboard Error</CardTitle>
+          <CardTitle>대시보드 오류</CardTitle>
           <CardDescription>
-            There was a problem loading the dashboard.
+            대시보드를 불러오는 중 문제가 발생했습니다.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -45,7 +45,7 @@ export default function DashboardError({
           <div className="flex flex-col gap-2">
             <Button onClick={reset} className="w-full">
               <RotateCcw className="mr-2 h-4 w-4" />
-              Try Again
+              다시 시도
             </Button>
             <Button 
               onClick={() => router.back()} 
@@ -53,7 +53,7 @@ export default function DashboardError({
               className="w-full"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Go Back
+              뒤로 가기
             </Button>
           </div>
         </CardContent>

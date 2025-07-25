@@ -54,7 +54,7 @@ export function ProjectList({ className, onNewProject }: ProjectListProps) {
         }}
       >
         <Plus className="h-4 w-4" />
-        New Project
+        새 프로젝트
       </Button>
 
       {projects.length === 0 ? (

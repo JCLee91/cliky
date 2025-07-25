@@ -27,7 +27,7 @@ export function MockPRDViewer({ content, projectName }: MockPRDViewerProps) {
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <CardTitle className="text-xl">📋 Product Requirements Document</CardTitle>
+            <CardTitle className="text-xl">📋 제품 요구사항 문서</CardTitle>
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -37,7 +37,7 @@ export function MockPRDViewer({ content, projectName }: MockPRDViewerProps) {
               className="gap-2"
             >
               <Copy className="h-4 w-4" />
-              Copy
+              복사
             </Button>
             <Button
               variant="outline"
@@ -46,7 +46,7 @@ export function MockPRDViewer({ content, projectName }: MockPRDViewerProps) {
               className="gap-2"
             >
               <Download className="h-4 w-4" />
-              Download
+              다운로드
             </Button>
           </div>
         </div>

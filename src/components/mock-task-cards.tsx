@@ -36,11 +36,11 @@ export function MockTaskCards({ tasks, projectName }: MockTaskCardsProps) {
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'Completed'
+        return '완료'
       case 'in_progress':
-        return 'In Progress'
+        return '진행 중'
       case 'todo':
-        return 'To Do'
+        return '할 일'
       default:
         return status
     }
@@ -52,10 +52,10 @@ export function MockTaskCards({ tasks, projectName }: MockTaskCardsProps) {
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="flex items-center gap-2">
-              📋 Task List
+              📋 작업 목록
             </CardTitle>
             <CardDescription>
-              {tasks.length} tasks • Click to manage
+              {tasks.length}개 작업 • 클릭하여 관리
             </CardDescription>
           </div>
           <Button
@@ -65,7 +65,7 @@ export function MockTaskCards({ tasks, projectName }: MockTaskCardsProps) {
             className="gap-2"
           >
             <Download className="h-4 w-4" />
-            Download
+            다운로드
           </Button>
         </div>
       </CardHeader>

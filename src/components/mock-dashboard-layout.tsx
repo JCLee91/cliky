@@ -74,7 +74,7 @@ export function MockDashboardLayout({ children, selectedProject, onProjectSelect
             <div className="space-y-4">
               <div>
                 <h3 className="mb-2 text-sm font-medium text-muted-foreground">
-                  Projects
+                  프로젝트
                 </h3>
                 <Button
                   variant="outline"
@@ -82,7 +82,7 @@ export function MockDashboardLayout({ children, selectedProject, onProjectSelect
                   onClick={handleInteraction}
                 >
                   <Plus className="h-4 w-4" />
-                  New Project
+                  새 프로젝트
                 </Button>
                 <div className="space-y-1">
                   {mockProjects.map((project) => (
@@ -150,7 +150,7 @@ export function MockDashboardLayout({ children, selectedProject, onProjectSelect
       {!selectedProject && (
         <OnboardingHint
           direction="left"
-          message="Click here to try!"
+          message="여기를 클릭해보세요!"
           targetPosition={{ 
             top: '160px', 
             left: isCollapsed ? '90px' : '210px' 

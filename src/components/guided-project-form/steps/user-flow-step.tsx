@@ -77,6 +77,7 @@ export function UserFlowStep() {
           <>
             <OptionCard
               option="A"
+              title="플로우 A"
               content={form.watch('userFlowOptionA')}
               isSelected={selectedChoice === 'A'}
               onClick={() => form.setValue('userFlowChoice', 'A')}
@@ -84,6 +85,7 @@ export function UserFlowStep() {
             />
             <OptionCard
               option="B"
+              title="플로우 B"
               content={form.watch('userFlowOptionB')}
               isSelected={selectedChoice === 'B'}
               onClick={() => form.setValue('userFlowChoice', 'B')}

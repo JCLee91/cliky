@@ -21,7 +21,7 @@ export function OptionCard({
   onClick,
   parseContent
 }: OptionCardProps) {
-  const defaultTitle = `Option ${option}`
+  const defaultTitle = `옵션 ${option}`
   
   return (
     <motion.div
@@ -36,14 +36,13 @@ export function OptionCard({
         }`}
         onClick={onClick}
       >
-        {isSelected && (
-          <CardHeader className="pb-2">
-            <div className="flex justify-end">
-              <Badge variant="default">Selected</Badge>
-            </div>
-          </CardHeader>
-        )}
-        <CardContent className={!isSelected ? 'pt-6' : ''}>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg">{title || defaultTitle}</CardTitle>
+            {isSelected && <Badge variant="default">선택됨</Badge>}
+          </div>
+        </CardHeader>
+        <CardContent>
           {content ? (
             parseContent ? (
               parseContent(content)
@@ -53,7 +52,7 @@ export function OptionCard({
               </p>
             )
           ) : (
-            <p className="text-sm text-muted-foreground">Generating...</p>
+            <p className="text-sm text-muted-foreground">생성 중...</p>
           )}
         </CardContent>
       </Card>

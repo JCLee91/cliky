@@ -22,8 +22,8 @@ import { guidedFormStyles } from './styles/common-styles'
 type FormData = z.infer<typeof guidedProjectFormSchema>
 
 const guidedProjectFormSchema = z.object({
-  name: z.string().min(1, 'Project name is required'),
-  idea: z.string().min(1, 'Project idea is required').max(300, 'Please keep it under 3 lines'),
+  name: z.string().min(1, '프로젝트 이름을 입력해주세요'),
+  idea: z.string().min(1, '프로젝트 아이디어를 입력해주세요').max(300, '3줄 이내로 작성해주세요'),
   productDescriptionChoice: z.enum(['A', 'B']).optional(),
   productDescriptionOptionA: z.string().optional(),
   productDescriptionOptionB: z.string().optional(),
@@ -87,9 +87,9 @@ export function GuidedProjectForm({ open, onOpenChange, onSubmit, loading = fals
   }
 
   const handleSubmit = async (data: FormData) => {
-    // Validate required choices
+    // 필수 선택 항목 검증
     if (!data.productDescriptionChoice || !data.userFlowChoice) {
-      console.error('Missing required choices')
+      console.error('필수 선택 항목이 누락되었습니다')
       return
     }
     

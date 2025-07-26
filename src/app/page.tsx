@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Plus, Sparkles } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { EmptyMessage } from '@/components/ui/empty-message'
 import { MockPRDViewer } from '@/components/mock-prd-viewer'
 import { MockTaskCards } from '@/components/mock-task-cards'
@@ -90,7 +90,6 @@ export default function MockDashboard() {
                 <Card className="max-w-md w-full">
                   <CardContent className="pt-6">
                     <EmptyMessage
-                      icon={Sparkles}
                       message="첫 프로젝트를 만들어보세요"
                       description="아이디어를 입력하면 AI가 PRD와 작업 목록을 생성합니다"
                       action={{

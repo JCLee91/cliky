@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Plus, Sparkles, Trash2 } from 'lucide-react'
+import { Plus, Trash2 } from 'lucide-react'
 import { EmptyMessage } from '@/components/ui/empty-message'
 import { ProjectForm } from '@/components/project-form'
 import { GuidedProjectForm } from '@/components/guided-project-form'
@@ -286,7 +286,6 @@ export default function DashboardPage() {
               <Card className="max-w-md w-full">
                 <CardContent className="pt-6">
                   <EmptyMessage
-                    icon={Sparkles}
                     message="첫 프로젝트를 만들어보세요"
                     description="아이디어를 입력하면 AI가 PRD와 작업 목록을 생성합니다"
                     action={{

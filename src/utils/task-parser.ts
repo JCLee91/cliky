@@ -32,7 +32,7 @@ export function parseTaskLine(line: string, projectId: string = ''): Task | null
       priority: task.priority || 'medium',
       estimated_time: task.estimatedTime || task.estimated_time || '',
       dependencies: task.dependencies || [],
-      order_index: task.id,
+      order_index: parseInt(task.id) || 0, // 숫자로 변환, 실패시 0
       status: task.status || 'todo',
       created_at: new Date().toISOString(),
       details: task.details,

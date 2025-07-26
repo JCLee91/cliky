@@ -12,12 +12,12 @@ import { ProgressBar } from '../project-form/progress-bar'
 import { IdeaStep } from './steps/idea-step'
 import { ProductDescriptionStep } from './steps/product-description-step'
 import { UserFlowStep } from './steps/user-flow-step'
-import { FeaturesRolesStep } from './steps/features-roles-step'
-import { TechStackStep } from './steps/tech-stack-step'
+import { TechStackTableStep } from './steps/tech-stack-table-step'
 import { GuidedProjectFormData } from '@/types/project'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { ANIMATION_PRESETS } from '@/lib/animation-presets'
 import { guidedFormStyles } from './styles/common-styles'
+import { useProjectStore } from '@/store/project-store'
 
 type FormData = z.infer<typeof guidedProjectFormSchema>
 
@@ -32,9 +32,6 @@ const guidedProjectFormSchema = z.object({
   userFlowOptionA: z.string().optional(),
   userFlowOptionB: z.string().optional(),
   userFlowNotes: z.string().optional(),
-  coreFeatures: z.array(z.string()).optional(),
-  roles: z.array(z.string()).optional(),
-  featuresNotes: z.string().optional(),
   techStack: z.array(z.string()).optional(),
   techStackNotes: z.string().optional()
 })
@@ -46,10 +43,11 @@ interface GuidedProjectFormProps {
   loading?: boolean
 }
 
-const TOTAL_STEPS = 5
+const TOTAL_STEPS = 4
 
 export function GuidedProjectForm({ open, onOpenChange, onSubmit, loading = false }: GuidedProjectFormProps) {
   const [currentStep, setCurrentStep] = useState(1)
+  const { setIsFormOpen, setIsMethodModalOpen } = useProjectStore()
   
   const form = useForm<FormData>({
     resolver: zodResolver(guidedProjectFormSchema),
@@ -64,9 +62,6 @@ export function GuidedProjectForm({ open, onOpenChange, onSubmit, loading = fals
       userFlowOptionA: '',
       userFlowOptionB: '',
       userFlowNotes: '',
-      coreFeatures: [],
-      roles: [],
-      featuresNotes: '',
       techStack: [],
       techStackNotes: ''
     }
@@ -81,7 +76,12 @@ export function GuidedProjectForm({ open, onOpenChange, onSubmit, loading = fals
   }
 
   const handlePrevious = () => {
-    if (currentStep > 1) {
+    if (currentStep === 1) {
+      // Go back to project method selection
+      onOpenChange(false)
+      setIsFormOpen(false)
+      setIsMethodModalOpen(true)
+    } else {
       setCurrentStep(currentStep - 1)
     }
   }
@@ -131,9 +131,7 @@ export function GuidedProjectForm({ open, onOpenChange, onSubmit, loading = fals
       case 3:
         return <UserFlowStep />
       case 4:
-        return <FeaturesRolesStep />
-      case 5:
-        return <TechStackStep />
+        return <TechStackTableStep />
       default:
         return null
     }
@@ -152,9 +150,7 @@ export function GuidedProjectForm({ open, onOpenChange, onSubmit, loading = fals
         // Check if AI options are generated and a choice is made
         return values.userFlowOptionA && values.userFlowOptionB && !!values.userFlowChoice
       case 4:
-        return true // Optional step - features and roles are pre-selected
-      case 5:
-        return true // Optional step - tech stack is pre-selected
+        return true // Tech stack is auto-generated
       default:
         return false
     }
@@ -195,19 +191,15 @@ export function GuidedProjectForm({ open, onOpenChange, onSubmit, loading = fals
 
           {/* Footer */}
           <div className="flex items-center justify-between p-6 border-t">
-            {currentStep > 1 ? (
-              <Button
-                variant="outline"
-                onClick={handlePrevious}
-                disabled={false}
-                className="gap-2"
-              >
-                <ChevronLeft className={guidedFormStyles.iconSmall} />
-                이전
-              </Button>
-            ) : (
-              <div />
-            )}
+            <Button
+              variant="outline"
+              onClick={handlePrevious}
+              disabled={false}
+              className="gap-2"
+            >
+              <ChevronLeft className={guidedFormStyles.iconSmall} />
+              이전
+            </Button>
 
             <div className="flex gap-2">
               {currentStep === TOTAL_STEPS ? (
@@ -216,7 +208,7 @@ export function GuidedProjectForm({ open, onOpenChange, onSubmit, loading = fals
                   disabled={!canProceed() || loading}
                   className="gap-2"
                 >
-                  {loading ? '생성 중...' : 'PRD 생성'}
+                  {loading ? '생성 중...' : '프로젝트 시작하기'}
                 </Button>
               ) : (
                 <Button

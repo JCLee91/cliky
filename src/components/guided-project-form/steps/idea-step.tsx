@@ -19,8 +19,8 @@ export function IdeaStep() {
   return (
     <div className={guidedFormStyles.stepContainer}>
       <StepHeader
-        title="프로젝트 아이디어가 무엇인가요?"
-        description="간단한 개요로 시작하세요. AI가 다음 단계에서 확장하는 것을 도와드릴 것입니다."
+        title="어떤 프로젝트를 만들고 싶으신가요?"
+        description="떠오르는 아이디어를 편하게 적어주세요. AI가 구체화를 도와드릴게요."
       />
 
       <div className="space-y-4">
@@ -32,7 +32,7 @@ export function IdeaStep() {
               <FormLabel className="text-base">프로젝트 이름</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="예: TaskFlow, ShopEasy, BlogHub"
+                  placeholder="예: 투두매니저, 쇼핑몰, 블로그"
                   className="text-base"
                   autoComplete="off"
                   data-no-translate="true"
@@ -49,16 +49,16 @@ export function IdeaStep() {
           name="idea"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-base">간단한 설명</FormLabel>
+              <FormLabel className="text-base">프로젝트 설명</FormLabel>
               <FormDescription className="flex items-center justify-between">
-                <span>프로젝트를 3줄 이내로 설명해주세요</span>
+                <span>핵심 기능과 목적을 간단히 적어주세요</span>
                 <span className={lineCount > 3 || charCount > 300 ? 'text-destructive' : 'text-muted-foreground'}>
                   {lineCount}/3 줄 • {charCount}/300 글자
                 </span>
               </FormDescription>
               <FormControl>
                 <Textarea
-                  placeholder="예: 원격 팀을 위한 작업 관리 앱으로 프로젝트와 마감일을 추적하는 데 도움을 줍니다. 실시간 협업 기능이 있고 Slack과 같은 인기 도구와 통합되어야 합니다."
+                  placeholder="예: 팀원들이 함께 일정과 작업을 관리할 수 있는 협업 도구를 만들고 싶어요. 실시간으로 진행 상황을 공유하고, 슬랙 같은 메신저와 연동되면 좋겠어요."
                   className={guidedFormStyles.textareaLarge}
                   autoComplete="off"
                   data-no-translate="true"
@@ -89,10 +89,9 @@ export function IdeaStep() {
 
       {/* Tips section */}
       <div className={guidedFormStyles.infoBox}>
-        <h4 className="font-medium mb-2">💡 간단하게 유지하세요</h4>
+        <h4 className="font-medium mb-2">💡 팁</h4>
         <p className={guidedFormStyles.mutedSmall}>
-          기본적인 아이디어만 주세요. AI가 다음 단계에서 상세한 제품 설명, 
-          사용자 플로우, 기능을 개발하는 것을 도와드립니다.
+          완벽하지 않아도 괜찮아요. AI가 함께 아이디어를 다듬어 나갈 거예요.
         </p>
       </div>
     </div>

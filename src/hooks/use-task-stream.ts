@@ -20,6 +20,7 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
   const [isParsingComplete, setIsParsingComplete] = useState(false)
   const [isExpandingTasks, setIsExpandingTasks] = useState(false)
   const processedLinesRef = useRef<number>(0)
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
   
   // Store dynamic callbacks
   const callbacksRef = useRef<{
@@ -104,8 +105,13 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
   useEffect(() => {
     if (!completion || !isLoading || isParsingComplete) return
 
+    // 기존 타이머 정리
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current)
+    }
+
     // 디바운싱을 위한 타이머
-    const debounceTimer = setTimeout(() => {
+    debounceTimerRef.current = setTimeout(() => {
       const lines = completion.trim().split('\n')
       const newTasks: Task[] = []
       
@@ -138,9 +144,21 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
     }, 300) // 300ms 디바운스로 증가하여 렌더링 빈도 감소
 
     return () => {
-      clearTimeout(debounceTimer)
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current)
+        debounceTimerRef.current = null
+      }
     }
   }, [completion, isLoading, isParsingComplete])
+
+  // 컴포넌트 언마운트 시 타이머 정리
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current)
+      }
+    }
+  }, [])
 
   const generateTasksStream = async (
     project: Project,
@@ -200,9 +218,9 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
       priority: task.priority || 'medium',
       estimated_time: task.estimatedTime || task.estimated_time,
       dependencies: [],
-      order_index: index,
+      order_index: index, // index를 사용하여 타입 문제 해결
       details: task.details || null,
-      test_strategy: task.testStrategy || null,
+      test_strategy: task.testStrategy || null, // 필드명 일치
       acceptance_criteria: task.acceptanceCriteria || []
     }))
 
@@ -222,7 +240,6 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
     try {
       setIsExpandingTasks(true)
       
-      
       toast.info(`${complexTasks.length}개의 복잡한 작업을 확장하고 있습니다...`)
       
       const response = await fetch('/api/taskmaster', {
@@ -241,33 +258,38 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
         })
       })
       
-      if (response.ok) {
-        const { data } = await response.json()
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`HTTP ${response.status}: ${errorText}`)
+      }
+      
+      const { data } = await response.json()
+      
+      // 서브태스크를 점진적으로 추가 (기존 태스크 유지)
+      setParsedTasks(prev => {
+        // 먼저 현재 상태를 복사
+        const updatedTasks = [...prev]
         
-        // 서브태스크를 점진적으로 추가 (기존 태스크 유지)
-        setParsedTasks(prev => {
-          // 먼저 현재 상태를 복사
-          const updatedTasks = [...prev]
-          
-          // 각 확장된 태스크에 대해 업데이트
-          data.expandedTasks.forEach((expansion: any) => {
-            const taskIndex = updatedTasks.findIndex(t => t.id === expansion.taskId)
-            if (taskIndex !== -1 && expansion.subtasks && expansion.subtasks.length > 0) {
-              // 기존 태스크 객체를 유지하면서 서브태스크만 추가
-              updatedTasks[taskIndex] = {
-                ...updatedTasks[taskIndex],
-                subtasks: expansion.subtasks
-              }
+        // 각 확장된 태스크에 대해 업데이트
+        data.expandedTasks.forEach((expansion: any) => {
+          const taskIndex = updatedTasks.findIndex(t => t.id === expansion.taskId)
+          if (taskIndex !== -1 && expansion.subtasks && expansion.subtasks.length > 0) {
+            // 기존 태스크 객체를 유지하면서 서브태스크만 추가
+            updatedTasks[taskIndex] = {
+              ...updatedTasks[taskIndex],
+              subtasks: expansion.subtasks
             }
-          })
-          
-          return updatedTasks
+          }
         })
         
-        // Success toast removed
-      }
+        return updatedTasks
+      })
+      
+      // Success toast removed
     } catch (error) {
-      toast.error('복잡한 작업 확장 실패')
+      const errorMsg = error instanceof Error ? error.message : '알 수 없는 오류'
+      console.error('복잡한 작업 확장 실패:', error)
+      toast.error(`복잡한 작업 확장 실패: ${errorMsg}`)
     } finally {
       setIsExpandingTasks(false)
     }
@@ -278,6 +300,12 @@ export function useTaskStream(options?: UseTaskStreamOptions) {
     setIsParsingComplete(false)
     setIsExpandingTasks(false)
     processedLinesRef.current = 0
+    
+    // 타이머 정리
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current)
+      debounceTimerRef.current = null
+    }
   }
 
   return {

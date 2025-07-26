@@ -43,7 +43,7 @@ export function MockDashboardLayout({ children, selectedProject, onProjectSelect
                 onProjectSelect(null)
                 router.push('/')
               }} className="flex items-center cursor-pointer">
-                <Logo variant="full" width={120} height={32} className="-ml-4 -mt-1" />
+                <Logo variant="full" width={120} height={32} className="-ml-4 -mt-1" priority />
               </div>
               <Button
                 variant="ghost"

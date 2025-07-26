@@ -63,8 +63,8 @@ export function UserFlowStep() {
   return (
     <div className={guidedFormStyles.stepContainer}>
       <StepHeader
-        title="사용자 플로우를 선택하세요"
-        description="제품 설명을 바탕으로 두 가지 사용자 플로우 접근 방식을 제공합니다. 비전에 가장 잘 맞는 것을 선택하세요."
+        title="사용자 경험을 디자인해볼까요?"
+        description="사용자가 서비스를 어떻게 이용할지 두 가지 시나리오를 준비했어요."
       />
 
       <div className={guidedFormStyles.gridTwoColumn}>
@@ -77,7 +77,6 @@ export function UserFlowStep() {
           <>
             <OptionCard
               option="A"
-              title="플로우 A"
               content={form.watch('userFlowOptionA')}
               isSelected={selectedChoice === 'A'}
               onClick={() => form.setValue('userFlowChoice', 'A')}
@@ -85,7 +84,6 @@ export function UserFlowStep() {
             />
             <OptionCard
               option="B"
-              title="플로우 B"
               content={form.watch('userFlowOptionB')}
               isSelected={selectedChoice === 'B'}
               onClick={() => form.setValue('userFlowChoice', 'B')}
@@ -97,7 +95,7 @@ export function UserFlowStep() {
 
       <AdditionalNotesField
         name="userFlowNotes"
-        placeholder="강조하고 싶은 특정 사용자 여정이나 플로우 수정 사항..."
+        placeholder="특별히 고려했으면 하는 사용자 시나리오가 있나요?"
       />
     </div>
   )

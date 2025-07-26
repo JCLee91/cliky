@@ -3,7 +3,7 @@
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useProjectStore } from '@/store/project-store'
-import { FileEdit, Sparkles } from 'lucide-react'
+import { FileEdit, Bot } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { ANIMATION_PRESETS } from '@/lib/animation-presets'
 
@@ -41,7 +41,7 @@ export function ProjectMethodModal() {
               onClick={() => handleMethodSelect('guided')}
             >
               <CardHeader className="text-center p-8">
-                <Sparkles className="w-12 h-12 mb-4 mx-auto text-primary" />
+                <Bot className="w-12 h-12 mb-4 mx-auto text-primary" />
                 <CardTitle className="text-xl mb-3">원하는 것을 선택하기</CardTitle>
                 <CardDescription className="text-base">
                   AI가 맞춤형 추천과 선택 옵션으로 단계별 프로세스를 안내해드립니다

@@ -20,7 +20,7 @@ export function CardSkeleton({
           <Skeleton className="h-4 w-1/2 mt-2" />
         </CardHeader>
       )}
-      <CardContent className="space-y-3">
+      <CardContent className={showHeader ? "space-y-3" : "space-y-3 pt-6"}>
         {Array.from({ length: lines }).map((_, i) => (
           <Skeleton 
             key={i} 

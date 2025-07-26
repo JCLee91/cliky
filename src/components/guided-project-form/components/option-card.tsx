@@ -6,7 +6,6 @@ import { motion } from 'framer-motion'
 
 interface OptionCardProps {
   option: 'A' | 'B'
-  title?: string
   content: string | null
   isSelected: boolean
   onClick: () => void
@@ -15,14 +14,11 @@ interface OptionCardProps {
 
 export function OptionCard({ 
   option, 
-  title, 
   content, 
   isSelected, 
   onClick,
   parseContent
 }: OptionCardProps) {
-  const defaultTitle = `옵션 ${option}`
-  
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
@@ -36,13 +32,14 @@ export function OptionCard({
         }`}
         onClick={onClick}
       >
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">{title || defaultTitle}</CardTitle>
-            {isSelected && <Badge variant="default">선택됨</Badge>}
-          </div>
-        </CardHeader>
-        <CardContent>
+        {isSelected && (
+          <CardHeader>
+            <div className="flex justify-end">
+              <Badge variant="default">선택됨</Badge>
+            </div>
+          </CardHeader>
+        )}
+        <CardContent className={!isSelected ? 'pt-6' : ''}>
           {content ? (
             parseContent ? (
               parseContent(content)

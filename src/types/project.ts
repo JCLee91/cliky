@@ -32,11 +32,6 @@ export interface GuidedProjectFormData {
   userFlowOptionA?: string
   userFlowOptionB?: string
   userFlowNotes?: string
-  coreFeatures?: string[]
-  roles?: string[]
-  suggestedFeatures?: string[]
-  suggestedRoles?: string[]
-  featuresNotes?: string
   techStack?: string[]
   techStackNotes?: string
 }

@@ -17,7 +17,7 @@ Fast, flawless product building tool for vibe coding
 ```bash
 # Clone repository
 git clone <repository-url>
-cd test2
+cd ClikyAI
 
 # Install dependencies
 npm install

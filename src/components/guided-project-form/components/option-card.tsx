@@ -1,7 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { Card, CardContent } from '@/components/ui/card'
 import { motion } from 'framer-motion'
 
 interface OptionCardProps {
@@ -32,14 +31,7 @@ export function OptionCard({
         }`}
         onClick={onClick}
       >
-        {isSelected && (
-          <CardHeader>
-            <div className="flex justify-end">
-              <Badge variant="default">선택됨</Badge>
-            </div>
-          </CardHeader>
-        )}
-        <CardContent className={!isSelected ? 'pt-6' : ''}>
+        <CardContent className="pt-6">
           {content ? (
             parseContent ? (
               parseContent(content)

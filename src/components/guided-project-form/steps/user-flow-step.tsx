@@ -19,18 +19,27 @@ export function UserFlowStep() {
   const productDescriptionNotes = form.watch('productDescriptionNotes')
   const selectedChoice = form.watch('userFlowChoice')
   
-  const { generate, hasGenerated, isGenerating } = useAIGeneration({
+  const { generate, isGenerating } = useAIGeneration({
     endpoint: '/api/guided-form/generate',
     onSuccess: (data) => {
       form.setValue('userFlowOptionA', data.optionA)
       form.setValue('userFlowOptionB', data.optionB)
     },
-    dependencies: [name, idea, productDescriptionChoice],
     enabled: true
   })
   
+  const userFlowOptionA = form.watch('userFlowOptionA')
+  const userFlowOptionB = form.watch('userFlowOptionB')
+  
   useEffect(() => {
-    if (!hasGenerated && name && idea && productDescriptionChoice) {
+    // 이미 생성된 데이터가 있거나 생성 중이면 생성하지 않음
+    if ((userFlowOptionA && userFlowOptionB) || isGenerating) {
+      return
+    }
+    
+    // 필요한 입력이 모두 있을 때만 생성
+    if (name && idea && productDescriptionChoice) {
+      console.log('Triggering AI generation for user flows')
       const selectedDescription = productDescriptionChoice === 'A' 
         ? form.getValues('productDescriptionOptionA')
         : form.getValues('productDescriptionOptionB')
@@ -45,16 +54,16 @@ export function UserFlowStep() {
         }
       })
     }
-  }, [name, idea, productDescriptionChoice, hasGenerated, generate])
+  }, [name, idea, productDescriptionChoice, isGenerating, generate, form, productDescriptionNotes])
 
   const parseUserFlow = (content: string) => {
     // Format numbered list with proper line breaks
     const formatted = content
-      .replace(/(\d+\.\s)/g, '\n$1') // Add line break before numbers
+      .replace(/(\d+\.\s)/g, '\n\n$1') // Add double line break before numbers for better spacing
       .trim()
     
     return (
-      <p className={`${guidedFormStyles.mutedSmall} whitespace-pre-wrap`}>
+      <p className={`${guidedFormStyles.mutedSmall} whitespace-pre-wrap leading-relaxed`}>
         {formatted}
       </p>
     )

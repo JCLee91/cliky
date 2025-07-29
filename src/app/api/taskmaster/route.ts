@@ -10,8 +10,8 @@ import { openai } from '@ai-sdk/openai'
 import { generateText } from 'ai'
 import { streamText, streamObject } from 'ai'
 import { ProjectFormData } from '@/types/project'
-import { PRD_SYSTEM_PROMPT, generatePRDPrompt } from '@/lib/prompts/prd-generation'
-import { generateSearchQueriesWithAI } from '@/lib/prompts/search-queries'
+import { PRD_SYSTEM_PROMPT, generatePRDPrompt } from '@/lib/prompts/architect-prompts'
+import { generateSearchQueriesWithAI } from '@/lib/prompts/researcher-prompts'
 
 
 const GeneratePRDRequestSchema = z.object({
@@ -199,7 +199,7 @@ export async function POST(request: NextRequest) {
       case 'generate-tasks-streaming': {
         const { prdContent, options = {} } = validatedBody as z.infer<typeof GenerateTasksStreamingRequestSchema>
         
-        const { getTaskMasterPrompt } = await import('@/lib/prompts/parse-prd')
+        const { getTaskMasterPrompt } = await import('@/lib/prompts/taskmaster-prompts')
         
         // Convert projectContext object to string if needed
         let projectContextStr = ''
@@ -280,7 +280,7 @@ Start generating ${numTasks} tasks now:`
       case 'expand-complex-tasks': {
         const { tasks, projectContext } = validatedBody as z.infer<typeof ExpandComplexTasksRequestSchema>
         
-        const { getExpandTaskPrompt } = await import('@/lib/prompts/expand-task')
+        const { getExpandTaskPrompt } = await import('@/lib/prompts/subtask-prompts')
         
         // 각 복잡한 태스크에 대해 서브태스크 생성
         const expandedTasks = await Promise.all(

@@ -33,7 +33,7 @@ export function TechStackTableStep() {
   const productDescriptionChoice = form.watch('productDescriptionChoice')
   const userFlowChoice = form.watch('userFlowChoice')
   
-  const { generate, hasGenerated, isGenerating } = useAIGeneration({
+  const { generate, isGenerating } = useAIGeneration({
     endpoint: '/api/guided-form/generate',
     onSuccess: (data) => {
       // Transform the tech stack data into table format
@@ -85,12 +85,19 @@ export function TechStackTableStep() {
       const allTech = items.map(item => item.technology)
       form.setValue('techStack', allTech)
     },
-    dependencies: [name, idea, productDescriptionChoice, userFlowChoice],
     enabled: true
   })
   
+  const existingTechStack = form.watch('techStack')
+  
   useEffect(() => {
-    if (!hasGenerated && name && idea && productDescriptionChoice && userFlowChoice) {
+    // 이미 생성된 데이터가 있거나 생성 중이면 생성하지 않음
+    if ((existingTechStack && existingTechStack.length > 0) || isGenerating || techStackItems.length > 0) {
+      return
+    }
+    
+    if (name && idea && productDescriptionChoice && userFlowChoice && !isGenerating) {
+      console.log('Triggering AI generation for tech stack')
       const selectedDescription = productDescriptionChoice === 'A' 
         ? form.getValues('productDescriptionOptionA')
         : form.getValues('productDescriptionOptionB')
@@ -109,7 +116,7 @@ export function TechStackTableStep() {
         }
       })
     }
-  }, [name, idea, productDescriptionChoice, userFlowChoice, hasGenerated, generate])
+  }, [name, idea, productDescriptionChoice, userFlowChoice, isGenerating, generate, techStackItems.length])
 
   return (
     <div className={guidedFormStyles.stepContainer}>

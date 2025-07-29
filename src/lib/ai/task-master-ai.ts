@@ -6,8 +6,8 @@
 import { openai } from '@ai-sdk/openai'
 import { generateText, generateObject } from 'ai'
 import { z } from 'zod'
-import { getTaskMasterPrompt } from '../prompts/parse-prd'
-import { getExpandTaskPrompt } from '../prompts/expand-task'
+import { getTaskMasterPrompt } from '../prompts/taskmaster-prompts'
+import { getExpandTaskPrompt } from '../prompts/subtask-prompts'
 import {
   parseTasksFromText,
   parseSubtasksFromText,

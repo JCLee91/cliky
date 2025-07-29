@@ -1,17 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { toast } from 'sonner'
 
 interface UseAIGenerationOptions {
   endpoint: string
   onSuccess?: (data: any) => void
-  dependencies: any[]
   enabled?: boolean
 }
 
 export function useAIGeneration({
   endpoint,
   onSuccess,
-  dependencies,
   enabled = true
 }: UseAIGenerationOptions) {
   const [isGenerating, setIsGenerating] = useState(false)
@@ -53,37 +51,11 @@ export function useAIGeneration({
     }
   }
 
-  // Store previous dependencies to detect actual changes
-  const [prevDependencies, setPrevDependencies] = useState<any[]>([])
-  
-  // Reset hasGenerated only when dependencies actually change values
-  useEffect(() => {
-    const hasActuallyChanged = dependencies.some((dep, index) => 
-      dep !== prevDependencies[index]
-    )
-    
-    if (hasActuallyChanged && dependencies.length > 0) {
-      setPrevDependencies([...dependencies])
-      if (hasGenerated) {
-        setHasGenerated(false)
-      }
-    }
-  }, dependencies)
+  // Dependencies 변경을 추적하지 않음 - 컴포넌트에서 데이터 존재 여부로 판단
+  // hasGenerated는 generate 호출 성공 여부만 추적
 
-  useEffect(() => {
-    let mounted = true
-    
-    // Check if all dependencies are truthy and generation is enabled
-    const shouldGenerate = enabled && !hasGenerated && dependencies.every(dep => dep) && mounted
-    
-    if (shouldGenerate) {
-      // Auto-generation logic can be added here if needed
-    }
-    
-    return () => {
-      mounted = false
-    }
-  }, [...dependencies, hasGenerated, enabled])
+  // 자동 생성 로직은 컴포넌트에서 필요에 따라 수동으로 호출
+  // 중복 호출을 방지하기 위해 훅 내부에서는 자동 생성하지 않음
 
   return {
     generate,

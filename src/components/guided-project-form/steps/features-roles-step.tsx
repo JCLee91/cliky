@@ -27,7 +27,7 @@ export function FeaturesRolesStep() {
   const suggestedFeatures = form.watch('suggestedFeatures') || []
   const suggestedRoles = form.watch('suggestedRoles') || []
   
-  const { generate, hasGenerated, isGenerating } = useAIGeneration({
+  const { generate, isGenerating } = useAIGeneration({
     endpoint: '/api/guided-form/generate',
     onSuccess: (data) => {
       form.setValue('suggestedFeatures', data.features)
@@ -36,12 +36,21 @@ export function FeaturesRolesStep() {
       form.setValue('coreFeatures', data.features)
       form.setValue('roles', data.roles)
     },
-    dependencies: [name, idea, productDescriptionChoice, userFlowChoice],
     enabled: true
   })
   
+  const existingSuggestedFeatures = form.watch('suggestedFeatures')
+  const existingSuggestedRoles = form.watch('suggestedRoles')
+  
   useEffect(() => {
-    if (!hasGenerated && name && idea && productDescriptionChoice && userFlowChoice) {
+    // 이미 생성된 데이터가 있거나 생성 중이면 생성하지 않음
+    if ((existingSuggestedFeatures && existingSuggestedRoles && existingSuggestedFeatures.length > 0 && existingSuggestedRoles.length > 0) || isGenerating) {
+      return
+    }
+    
+    // 필요한 입력이 모두 있을 때만 생성
+    if (name && idea && productDescriptionChoice && userFlowChoice) {
+      console.log('Triggering AI generation for features and roles')
       const selectedDescription = productDescriptionChoice === 'A' 
         ? form.getValues('productDescriptionOptionA')
         : form.getValues('productDescriptionOptionB')
@@ -61,7 +70,7 @@ export function FeaturesRolesStep() {
         }
       })
     }
-  }, [name, idea, productDescriptionChoice, userFlowChoice, hasGenerated, generate])
+  }, [name, idea, productDescriptionChoice, userFlowChoice, isGenerating, generate])
 
   const toggleFeature = (feature: string) => {
     const current = form.getValues('coreFeatures') || []

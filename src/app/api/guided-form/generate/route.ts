@@ -8,7 +8,7 @@ import {
   FEATURES_ROLES_PROMPT,
   TECH_STACK_PROMPT,
   fillPromptTemplate 
-} from '@/lib/prompts/guided-form-prompts'
+} from '@/lib/prompts/wizard-prompts'
 
 const RequestSchema = z.object({
   type: z.enum(['product-descriptions', 'user-flows', 'features-roles', 'tech-stack']),
@@ -82,6 +82,8 @@ export async function POST(request: NextRequest) {
     
     console.log('Generating AI response for type:', type)
     console.log('Using model:', process.env.AI_MODEL || 'gpt-4o')
+    console.log('Prompt preview:', prompt.substring(0, 200) + '...')
+    console.log('Request data:', JSON.stringify(data, null, 2))
     
     const { text } = await generateText({
       model,

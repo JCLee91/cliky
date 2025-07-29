@@ -29,7 +29,7 @@ npm install -g @cliky/mcp-task-manager
 ```bash
 # Create a .env file in a secure location
 SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_KEY=your-service-role-key
+SUPABASE_ANON_KEY=your-anon-key
 CLIKY_USER_ID=your-user-id
 ```
 
@@ -45,7 +45,7 @@ CLIKY_USER_ID=your-user-id
       "command": "cliky-mcp",
       "env": {
         "SUPABASE_URL": "your-supabase-url",
-        "SUPABASE_SERVICE_KEY": "your-service-key",
+        "SUPABASE_ANON_KEY": "your-anon-key",
         "CLIKY_USER_ID": "your-user-id"
       }
     }
@@ -89,10 +89,10 @@ Once configured, you can use natural language to interact with your Cliky tasks:
 
 ## Getting Your Credentials
 
-### Supabase URL and Service Key
+### Supabase URL and Anon Key
 1. Go to your Cliky project's Supabase dashboard
 2. Navigate to Settings → API
-3. Copy the Project URL and service_role key
+3. Copy the Project URL and anon key (public key)
 
 ### User ID
 1. Log into Cliky
@@ -130,9 +130,10 @@ npx @modelcontextprotocol/inspector node build/index.js
 
 ## Security Notes
 
-- **Service Key**: Keep your service role key secure and never commit it to version control
+- **Anon Key**: The anon key is safe for client-side use and works with Row Level Security (RLS)
 - **User Isolation**: The server only accesses tasks assigned to the configured user ID
 - **Environment Variables**: Store credentials in environment variables, not in code
+- **Task Status Storage**: Task statuses are stored locally in `.data/` directory per user
 
 ## Troubleshooting
 
@@ -147,8 +148,9 @@ npx @modelcontextprotocol/inspector node build/index.js
 - Ensure Cursor has been restarted after configuration
 
 ### Permission errors
-- Confirm the service role key has proper permissions
+- Confirm the anon key is correct
 - Verify RLS policies allow access to your tasks
+- Check that your user ID matches the authenticated user
 
 ## Contributing
 

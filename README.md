@@ -118,6 +118,11 @@ src/
 ├── hooks/                # Custom React hooks
 ├── lib/                  # Utility functions
 │   ├── prompts/         # AI prompt management
+│   │   ├── architect-prompts.ts    # PRD generation prompts
+│   │   ├── taskmaster-prompts.ts   # Task breakdown prompts
+│   │   ├── subtask-prompts.ts      # Subtask expansion prompts
+│   │   ├── wizard-prompts.ts       # Guided form prompts
+│   │   └── researcher-prompts.ts   # Search query prompts
 │   ├── supabase/        # Database client
 │   └── taskmaster/      # Task breakdown logic
 ├── store/               # State management

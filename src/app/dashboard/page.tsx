@@ -37,7 +37,8 @@ export default function DashboardPage() {
     fetchTasks, 
     updateTask, 
     deleteTask, 
-    reorderTasks 
+    reorderTasks,
+    setTasks 
   } = useMCP()
   
   const {
@@ -46,16 +47,7 @@ export default function DashboardPage() {
     isExpandingTasks,
     generateTasksStream,
     saveTasks: saveStreamedTasks
-  } = useTaskStream({
-    onSuccess: async (generatedTasks) => {
-      if (selectedProject) {
-        // Save tasks to database and use the returned data directly
-        const savedTasks = await saveStreamedTasks(selectedProject.id, generatedTasks)
-        // Update local state with saved tasks instead of fetching again
-        setTasks(savedTasks)
-      }
-    }
-  })
+  } = useTaskStream()
 
   const handleFormSuccess = async (formData: any) => {
     setIsFormOpen(false)
@@ -186,7 +178,14 @@ export default function DashboardPage() {
     }
 
     try {
-      await generateTasksStream(selectedProject, prdContent)
+      await generateTasksStream(selectedProject, prdContent, {
+        onSuccess: async (generatedTasks) => {
+          if (selectedProject) {
+            const savedTasks = await saveStreamedTasks(selectedProject.id, generatedTasks)
+            setTasks(savedTasks)
+          }
+        }
+      })
     } catch (error) {
       // Error is already handled in generateTasksStream with toast notification
       // No need to show another toast here
